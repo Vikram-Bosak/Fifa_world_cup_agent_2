@@ -18,14 +18,15 @@ def upload_to_facebook(image_path, text_content):
         logging.error("FACEBOOK_ACCESS_TOKEN is missing.")
         return False, None
         
-    url = f"https://graph.facebook.com/{page_id}/photos"
+    url = f"https://graph.facebook.com/v19.0/{page_id}/photos"
     from src.http_client import get_retry_session
     try:
         session = get_retry_session(retries=3)
         with open(image_path, 'rb') as image_file:
-            files = {'source': image_file}
-            data = {'message': text_content, 'access_token': access_token}
-            response = session.post(url, files=files, data=data, timeout=30)
+            files = {'source': ('image.jpg', image_file, 'image/jpeg')}
+            data = {'message': text_content}
+            params = {'access_token': access_token}
+            response = session.post(url, files=files, data=data, params=params, timeout=30)
             response.raise_for_status()
             result = response.json()
             post_id = result.get('post_id', result.get('id'))
