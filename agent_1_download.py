@@ -17,8 +17,6 @@ def run_agent_1():
     state = load_state()
     processed = set(state.keys())
     
-    send_telegram_message("🔍 <b>Pipeline Started:</b> Scanning Twitter profiles for new FIFA photos...")
-    
     try:
         tweet = get_latest_photo_tweet(profiles, processed)
     except Exception as e:
@@ -34,17 +32,17 @@ def run_agent_1():
         return
         
     logging.info(f"Processing new photo tweet: {tweet['url']} from {tweet['profile']}")
-    send_telegram_message(f"📥 <b>1. Photo download started for:</b>\n{tweet['url']}")
     
     download_path = f"output/temp_agent1_{int(time.time())}.jpg"
     if download_image(tweet['image_url'], download_path):
         caption = (
-            f"✅ <b>2. Photo download successful</b>\n\n"
-            f"STATUS: DOWNLOADED\n"
-            f"TITLE: {tweet['title'][:100]}...\n"
-            f"SOURCE: {tweet['url']}\n"
-            f"PROFILE: {tweet['profile']}\n"
-            f"🕒 Time: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}"
+            f"✅ <b>इमेज सफलतापूर्वक डाउनलोड हो गई।</b>\n\n"
+            f"🆔 <b>पोस्ट यूनिक आईडी:</b> {tweet['url']}\n"
+            f"📌 <b>टाइटल:</b> {tweet['title'][:100]}\n"
+            f"📝 <b>कैप्शन:</b> {tweet.get('caption', '')[:200]}...\n"
+            f"👤 <b>सोर्स प्रोफाइल:</b> {tweet['profile']}\n"
+            f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
+            f"📊 <b>स्टेटस:</b> Success"
         )
         res = send_telegram_photo(download_path, caption)
         if res and res.get("ok"):

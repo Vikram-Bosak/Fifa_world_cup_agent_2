@@ -31,7 +31,6 @@ def run_agent_2():
             continue
             
         logging.info(f"Processing DOWNLOADED message: {msg_id}")
-        send_telegram_message(f"🎨 <b>3. Photo editing started for post:</b>\n{post_id}", reply_to_message_id=msg_id)
         
         raw_path = f"output/raw_{msg_id}.jpg"
         edited_path = f"output/edited_{msg_id}.jpg"
@@ -44,11 +43,11 @@ def run_agent_2():
                     internal_post_id = f"FWC_{int(time.time())}"
                     
                     report = (
-                        f"✅ <b>4. Photo editing successful</b>\n\n"
-                        f"STATUS: EDITED\n"
-                        f"POST_ID: {internal_post_id}\n"
-                        f"TITLE: {title}\n"
-                        f"🕒 Time: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}"
+                        f"✅ <b>एडिटिंग सफलतापूर्वक पूरी हुई।</b>\n\n"
+                        f"🆔 <b>इंटरनल आईडी:</b> {internal_post_id}\n"
+                        f"🛠️ <b>किए गए बदलाव:</b> एआई वॉटरमार्क जोड़ा गया (AI Watermark Added)\n"
+                        f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
+                        f"📊 <b>स्टेटस:</b> Success"
                     )
                     
                     res = send_telegram_photo(edited_path, report, reply_to_message_id=msg_id)

@@ -56,7 +56,6 @@ def run_agent_3():
             continue
             
         logging.info(f"Processing EDITED message: {msg_id}")
-        send_telegram_message(f"🚀 <b>5. Photo upload to Facebook started for post:</b>\n{internal_post_id}", reply_to_message_id=msg_id)
         
         upload_path = f"output/upload_{msg_id}.jpg"
         
@@ -72,13 +71,11 @@ def run_agent_3():
                     public_url = f"https://www.facebook.com/{page_id}/posts/{url_post_id}"
                     
                     report_text = (
-                        f"✅ <b>6. Photo successfully uploaded to Facebook!</b>\n\n"
-                        f"STATUS: SUCCESS\n"
-                        f"📝 <b>Title:</b> {title}\n"
-                        f"🆔 <b>Internal Post ID:</b> {internal_post_id}\n"
-                        f"🌐 <b>Facebook Post ID:</b> {fb_post_id}\n"
-                        f"⏱️ <b>Time:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
-                        f"🔗 <a href='{public_url}'>View on Facebook</a>"
+                        f"✅ <b>अपलोड सफलतापूर्वक पूरा हुआ।</b>\n\n"
+                        f"🌐 <b>प्लेटफ़ॉर्म:</b> Facebook\n"
+                        f"🔗 <b>पोस्ट URL:</b> {public_url}\n"
+                        f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
+                        f"📊 <b>स्टेटस:</b> Success"
                     )
                     send_telegram_message(report_text, reply_to_message_id=msg_id)
                     

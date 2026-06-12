@@ -89,10 +89,17 @@ def get_latest_photo_tweet(profiles, processed_urls):
                             valid_image_url = f"{instance}{img_url}" if img_url.startswith('/') else img_url
                             break
                             
+                    # Extract clean text caption
+                    clean_text = soup.get_text(separator=' ', strip=True)
+                    p_tag = soup.find('p')
+                    if p_tag:
+                        clean_text = p_tag.get_text(separator=' ', strip=True)
+                        
                     if valid_image_url:
                         # Found a valid photo tweet
                         valid_tweets.append({
                             "title": title,
+                            "caption": clean_text,
                             "url": link,
                             "image_url": valid_image_url,
                             "profile": profile
