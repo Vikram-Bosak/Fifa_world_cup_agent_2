@@ -4,6 +4,8 @@ import feedparser
 from bs4 import BeautifulSoup
 import logging
 import random
+import time
+import calendar
 from datetime import datetime, timezone
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -20,6 +22,7 @@ def get_latest_photo_tweet(profiles, processed_urls):
     """
     Scans multiple profiles and returns the latest UNPROCESSED PHOTO tweet.
     Ensures that Videos and GIFs are strictly ignored.
+    Also ensures the tweet is from the last 2 hours.
     """
     random.shuffle(NITTER_INSTANCES)
     
@@ -52,6 +55,14 @@ def get_latest_photo_tweet(profiles, processed_urls):
                     if link in processed_urls:
                         continue # Skip already processed
                         
+                    # Check if tweet is within the last 2 hours (7200 seconds)
+                    if hasattr(entry, 'published_parsed') and entry.published_parsed:
+                        pub_ts = calendar.timegm(entry.published_parsed)
+                        age_seconds = time.time() - pub_ts
+                        if age_seconds > 7200:
+                            logging.info(f"Skipping {link} - Older than 2 hours (Age: {int(age_seconds/60)} mins)")
+                            continue
+                            
                     title = entry.title
                     description = entry.description
                     
