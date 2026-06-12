@@ -80,13 +80,17 @@ def run_agent_3():
                     url_post_id = fb_post_id.split('_')[-1] if '_' in fb_post_id else fb_post_id
                     public_url = f"https://www.facebook.com/{page_id}/posts/{url_post_id}"
                     
+                    github_run_id = os.getenv('GITHUB_RUN_ID', 'manual')
                     report_text = (
-                        f"✅ <b>अपलोड सफलतापूर्वक पूरा हुआ।</b>\n\n"
-                        f"🌐 <b>प्लेटफ़ॉर्म:</b> Facebook\n"
-                        f"🔗 <b>पोस्ट URL:</b> {public_url}\n"
-                        f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
-                        f"⏳ <b>Human Delay:</b> {delay_minutes} minutes\n"
-                        f"📊 <b>स्टेटस:</b> Success"
+                        f"✅ Upload Successfully Completed\n"
+                        f"🎬 Photo Name:\n{title}\n\n"
+                        f"📤 Facebook Upload Status: Success\n\n"
+                        f"🏷️ SEO Title:\n{title}\n\n"
+                        f"📝 Description:\n{facebook_text}\n\n"
+                        f"Original File: {internal_post_id}.jpg\n\n"
+                        f"🔗 Facebook Photo Post URL:\n{public_url}\n\n"
+                        f"📦 GitHub Repository:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2\n\n"
+                        f"📄 Workflow Run:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2/actions/runs/{github_run_id}"
                     )
                     send_telegram_message(report_text, reply_to_message_id=msg_id)
                     
