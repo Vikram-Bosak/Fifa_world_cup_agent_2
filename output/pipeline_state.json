@@ -41,12 +41,25 @@
         "public_url": "https://www.facebook.com/1094922960379153/posts/122098181685360902"
     },
     "https://nitter.net/FIFAWorldCup/status/2065434113235128616#m": {
-        "status": "EDITED",
+        "status": "UPLOADED",
         "telegram_msg_id": "40",
         "telegram_file_id": "AgACAgUAAxkDAAMoaiwXvlJBZXI3eAzRrDI5fksJZqwAAm8Qaxv-sWFVGodOFigKzC8BAAMCAAN3AAM8BA",
         "title": "Gilberto Mora enters the record books \ud83c\uddf2\ud83c\uddfd\n\n#FIFAWorldCup",
         "profile": "FIFAWorldCup",
         "caption": "Gilberto Mora enters the record books \ud83c\uddf2\ud83c\uddfd #FIFAWorldCup",
-        "internal_post_id": "FWC_1781274541"
+        "internal_post_id": "FWC_1781274541",
+        "fb_post_id": "1094922960379153_122098232781360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122098232781360902"
+    },
+    "https://nitter.net/FIFAWC26Updates/status/2065436018015408243#m": {
+        "status": "UPLOADED",
+        "telegram_msg_id": "43",
+        "telegram_file_id": "AgACAgUAAxkDAAMraiwjKEH8MMfZOMIf_9Mkss_oOhMAApwQaxv-sWFVwq9WhfBNDtIBAAMCAAN3AAM8BA",
+        "title": "\u2694\ufe0f MATCHUP OF THE DAY \u2694\ufe0f\n\n\ud83c\udde8\ud83c\udde6 Canada \ud83c\udd9a \ud83c\udde7\ud83c\udde6 Bosnia & Herzegovina\n\nA fierce battle. Elite talent. World Cup dreams on the line. \ud83c\udfc6\ud83d\udd25\n\nWho are you backing to win this one?\n\n\ud83d\udc47 Predict the score!  #FIFA",
+        "profile": "FIFAWC26Updates",
+        "caption": "\u2694\ufe0f MATCHUP OF THE DAY \u2694\ufe0f \ud83c\udde8\ud83c\udde6 Canada \ud83c\udd9a \ud83c\udde7\ud83c\udde6 Bosnia & Herzegovina A fierce battle. Elite talent. World Cup dreams on the line. \ud83c\udfc6\ud83d\udd25 Who are you backing to win this one? \ud83d\udc47 Predict the score! #FIFA",
+        "internal_post_id": "FWC_1781277460",
+        "fb_post_id": "1094922960379153_122098235091360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122098235091360902"
     }
 }
