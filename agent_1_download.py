@@ -17,17 +17,29 @@ def run_agent_1():
     state = load_state()
     processed = set(state.keys())
     
-    tweet = get_latest_photo_tweet(profiles, processed)
+    send_telegram_message("🔍 <b>Pipeline Started:</b> Scanning Twitter profiles for new FIFA photos...")
+    
+    try:
+        tweet = get_latest_photo_tweet(profiles, processed)
+    except Exception as e:
+        error_msg = f"❌ <b>Error:</b> Failed to scan Twitter profiles: {e}"
+        logging.error(error_msg)
+        send_telegram_message(error_msg)
+        return
+        
     if not tweet:
-        logging.info("No new UNPROCESSED PHOTO tweet found across profiles.")
-        send_telegram_message("Agent 1 Run: No new photo tweets found. Videos/GIFs were ignored.")
+        msg = "✅ <b>Pipeline Run Complete:</b> No new UNPROCESSED PHOTO tweet found."
+        logging.info(msg)
+        send_telegram_message(msg)
         return
         
     logging.info(f"Processing new photo tweet: {tweet['url']} from {tweet['profile']}")
+    send_telegram_message(f"📥 <b>1. Photo download started for:</b>\n{tweet['url']}")
     
     download_path = f"output/temp_agent1_{int(time.time())}.jpg"
     if download_image(tweet['image_url'], download_path):
         caption = (
+            f"✅ <b>2. Photo download successful</b>\n\n"
             f"STATUS: DOWNLOADED\n"
             f"TITLE: {tweet['title'][:100]}...\n"
             f"SOURCE: {tweet['url']}\n"
@@ -53,13 +65,17 @@ def run_agent_1():
                 profile=tweet['profile']
             )
         else:
-            logging.error("Failed to send photo to Telegram.")
+            error_msg = "❌ <b>Error:</b> Failed to send DOWNLOADED photo to Telegram."
+            logging.error(error_msg)
+            send_telegram_message(error_msg)
             
         # Clean up image
         if os.path.exists(download_path):
             os.remove(download_path)
     else:
-        logging.error("Failed to download image from Twitter.")
+        error_msg = f"❌ <b>Error:</b> Failed to download image from Twitter: {tweet['url']}"
+        logging.error(error_msg)
+        send_telegram_message(error_msg)
 
 if __name__ == "__main__":
     load_dotenv()

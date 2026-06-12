@@ -30,7 +30,7 @@ def upload_to_facebook(image_path, text_content):
             return True, post_id
     except Exception as e:
         logging.error(f"Failed to upload to Facebook: {e}")
-        return False, None
+        return False, str(e)
 
 def run_agent_3():
     logging.info("Starting Agent 3: Uploader")
@@ -56,35 +56,52 @@ def run_agent_3():
             continue
             
         logging.info(f"Processing EDITED message: {msg_id}")
+        send_telegram_message(f"🚀 <b>5. Photo upload to Facebook started for post:</b>\n{internal_post_id}", reply_to_message_id=msg_id)
+        
         upload_path = f"output/upload_{msg_id}.jpg"
         
-        if download_telegram_photo(file_id, upload_path):
-            facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Football #Soccer"
-            
-            success, fb_post_id = upload_to_facebook(upload_path, facebook_text)
-            if success and fb_post_id:
-                page_id = os.getenv("FACEBOOK_PAGE_ID", "me")
-                url_post_id = fb_post_id.split('_')[-1] if '_' in fb_post_id else fb_post_id
-                public_url = f"https://www.facebook.com/{page_id}/posts/{url_post_id}"
+        try:
+            if download_telegram_photo(file_id, upload_path):
+                facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Football #Soccer"
                 
-                report_text = (
-                    f"✅ <b>STATUS: SUCCESS</b>\n\n"
-                    f"📝 <b>Title:</b> {title}\n"
-                    f"🆔 <b>Internal Post ID:</b> {internal_post_id}\n"
-                    f"🌐 <b>Facebook Post ID:</b> {fb_post_id}\n"
-                    f"⏱️ <b>Time:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
-                    f"🔗 <a href='{public_url}'>View on Facebook</a>"
-                )
-                send_telegram_message(report_text, reply_to_message_id=msg_id)
-                
-                update_post_status(
-                    post_id=post_id,
-                    status="UPLOADED",
-                    fb_post_id=fb_post_id,
-                    public_url=public_url
-                )
-                logging.info(f"Successfully uploaded post {post_id} to Facebook.")
-            
+                success, fb_response = upload_to_facebook(upload_path, facebook_text)
+                if success and fb_response:
+                    fb_post_id = fb_response
+                    page_id = os.getenv("FACEBOOK_PAGE_ID", "me")
+                    url_post_id = fb_post_id.split('_')[-1] if '_' in fb_post_id else fb_post_id
+                    public_url = f"https://www.facebook.com/{page_id}/posts/{url_post_id}"
+                    
+                    report_text = (
+                        f"✅ <b>6. Photo successfully uploaded to Facebook!</b>\n\n"
+                        f"STATUS: SUCCESS\n"
+                        f"📝 <b>Title:</b> {title}\n"
+                        f"🆔 <b>Internal Post ID:</b> {internal_post_id}\n"
+                        f"🌐 <b>Facebook Post ID:</b> {fb_post_id}\n"
+                        f"⏱️ <b>Time:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
+                        f"🔗 <a href='{public_url}'>View on Facebook</a>"
+                    )
+                    send_telegram_message(report_text, reply_to_message_id=msg_id)
+                    
+                    update_post_status(
+                        post_id=post_id,
+                        status="UPLOADED",
+                        fb_post_id=fb_post_id,
+                        public_url=public_url
+                    )
+                    logging.info(f"Successfully uploaded post {post_id} to Facebook.")
+                else:
+                    error_msg = f"❌ <b>Error:</b> Failed to upload post {internal_post_id} to Facebook.\nDetails: {fb_response}"
+                    logging.error(error_msg)
+                    send_telegram_message(error_msg, reply_to_message_id=msg_id)
+            else:
+                error_msg = f"❌ <b>Error:</b> Failed to download edited photo from Telegram for upload (Post {internal_post_id})"
+                logging.error(error_msg)
+                send_telegram_message(error_msg, reply_to_message_id=msg_id)
+        except Exception as e:
+            error_msg = f"❌ <b>Error:</b> Exception during upload process: {e}"
+            logging.error(error_msg)
+            send_telegram_message(error_msg, reply_to_message_id=msg_id)
+        finally:
             # Clean up
             if os.path.exists(upload_path):
                 os.remove(upload_path)

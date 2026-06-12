@@ -2,7 +2,7 @@ import os
 import time
 import logging
 from dotenv import load_dotenv
-from src.telegram.reporter import download_telegram_photo, send_telegram_photo
+from src.telegram.reporter import download_telegram_photo, send_telegram_photo, send_telegram_message
 from src.image_editor.processor import add_watermark
 from src.state_manager import get_posts_by_status, update_post_status
 
@@ -31,41 +31,58 @@ def run_agent_2():
             continue
             
         logging.info(f"Processing DOWNLOADED message: {msg_id}")
+        send_telegram_message(f"🎨 <b>3. Photo editing started for post:</b>\n{post_id}", reply_to_message_id=msg_id)
         
         raw_path = f"output/raw_{msg_id}.jpg"
         edited_path = f"output/edited_{msg_id}.jpg"
         
-        if download_telegram_photo(file_id, raw_path):
-            # Edit Image
-            if add_watermark(raw_path, edited_path, logo_path="assets/logo/logo.png"):
-                # Generate Unique Post ID
-                internal_post_id = f"FWC_{int(time.time())}"
-                
-                report = (
-                    f"STATUS: EDITED\n"
-                    f"POST_ID: {internal_post_id}\n"
-                    f"TITLE: {title}\n"
-                    f"🕒 Time: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}"
-                )
-                
-                res = send_telegram_photo(edited_path, report)
-                if res and res.get("ok"):
-                    new_msg_id = str(res['result']['message_id'])
-                    photos = res['result'].get('photo', [])
-                    new_file_id = photos[-1]['file_id'] if photos else None
+        try:
+            if download_telegram_photo(file_id, raw_path):
+                # Edit Image
+                if add_watermark(raw_path, edited_path, logo_path="assets/logo/logo.png"):
+                    # Generate Unique Post ID
+                    internal_post_id = f"FWC_{int(time.time())}"
                     
-                    logging.info(f"Sent EDITED status. New Message ID: {new_msg_id}")
-                    
-                    update_post_status(
-                        post_id=post_id,
-                        status="EDITED",
-                        telegram_msg_id=new_msg_id,
-                        telegram_file_id=new_file_id,
-                        internal_post_id=internal_post_id
+                    report = (
+                        f"✅ <b>4. Photo editing successful</b>\n\n"
+                        f"STATUS: EDITED\n"
+                        f"POST_ID: {internal_post_id}\n"
+                        f"TITLE: {title}\n"
+                        f"🕒 Time: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}"
                     )
+                    
+                    res = send_telegram_photo(edited_path, report, reply_to_message_id=msg_id)
+                    if res and res.get("ok"):
+                        new_msg_id = str(res['result']['message_id'])
+                        photos = res['result'].get('photo', [])
+                        new_file_id = photos[-1]['file_id'] if photos else None
+                        
+                        logging.info(f"Sent EDITED status. New Message ID: {new_msg_id}")
+                        
+                        update_post_status(
+                            post_id=post_id,
+                            status="EDITED",
+                            telegram_msg_id=new_msg_id,
+                            telegram_file_id=new_file_id,
+                            internal_post_id=internal_post_id
+                        )
+                    else:
+                        error_msg = f"❌ <b>Error:</b> Failed to send EDITED photo for {post_id}"
+                        logging.error(error_msg)
+                        send_telegram_message(error_msg, reply_to_message_id=msg_id)
                 else:
-                    logging.error(f"Failed to send EDITED photo for {post_id}")
-            
+                    error_msg = f"❌ <b>Error:</b> Failed to add watermark/edit image for {post_id}"
+                    logging.error(error_msg)
+                    send_telegram_message(error_msg, reply_to_message_id=msg_id)
+            else:
+                error_msg = f"❌ <b>Error:</b> Failed to download photo from Telegram for editing (Post {post_id})"
+                logging.error(error_msg)
+                send_telegram_message(error_msg, reply_to_message_id=msg_id)
+        except Exception as e:
+            error_msg = f"❌ <b>Error:</b> Exception during editing process: {e}"
+            logging.error(error_msg)
+            send_telegram_message(error_msg, reply_to_message_id=msg_id)
+        finally:
             # Clean up files
             for p in [raw_path, edited_path]:
                 if os.path.exists(p):
