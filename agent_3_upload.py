@@ -5,6 +5,7 @@ import logging
 from dotenv import load_dotenv
 from src.telegram.reporter import download_telegram_photo, send_telegram_message
 from src.state_manager import get_posts_by_status, update_post_status
+from src.ai_generator import generate_facebook_post
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -48,6 +49,7 @@ def run_agent_3():
     for post_id, data in pending_posts.items():
         file_id = data.get("telegram_file_id")
         title = data.get("title", "FIFA Update")
+        description = data.get("caption", "")
         msg_id = data.get("telegram_msg_id")
         internal_post_id = data.get("internal_post_id", "UNKNOWN")
         
@@ -61,7 +63,7 @@ def run_agent_3():
         
         try:
             if download_telegram_photo(file_id, upload_path):
-                facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Soccer #USMNT"
+                facebook_text = generate_facebook_post(title, description)
                 
                 success, fb_response = upload_to_facebook(upload_path, facebook_text)
                 if success and fb_response:

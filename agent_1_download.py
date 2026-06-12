@@ -53,14 +53,14 @@ def run_agent_1():
             
             logging.info(f"Sent DOWNLOADED status to Telegram. Message ID: {msg_id}")
             
-            # Save to JSON state manager
             update_post_status(
                 post_id=tweet['url'],
                 status="DOWNLOADED",
                 telegram_msg_id=msg_id,
                 telegram_file_id=file_id,
                 title=tweet['title'],
-                profile=tweet['profile']
+                profile=tweet['profile'],
+                caption=tweet.get('caption', '')
             )
         else:
             error_msg = "❌ <b>Error:</b> Failed to send DOWNLOADED photo to Telegram."

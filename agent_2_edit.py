@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from src.telegram.reporter import download_telegram_photo, send_telegram_photo, send_telegram_message
 from src.image_editor.processor import add_watermark
 from src.state_manager import get_posts_by_status, update_post_status
+from src.ai_generator import generate_headline
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -24,6 +25,7 @@ def run_agent_2():
     for post_id, data in pending_posts.items():
         file_id = data.get("telegram_file_id")
         title = data.get("title", "FIFA Update")
+        description = data.get("caption", "")
         msg_id = data.get("telegram_msg_id")
         
         if not file_id:
@@ -37,15 +39,19 @@ def run_agent_2():
         
         try:
             if download_telegram_photo(file_id, raw_path):
+                # Generate AI Headline
+                headline = generate_headline(title, description)
+                
                 # Edit Image
-                if add_watermark(raw_path, edited_path, logo_path="assets/logo/logo.png"):
+                if add_watermark(raw_path, edited_path, logo_path="assets/logo/logo.png", watermark_text=headline):
                     # Generate Unique Post ID
                     internal_post_id = f"FWC_{int(time.time())}"
                     
                     report = (
                         f"✅ <b>एडिटिंग सफलतापूर्वक पूरी हुई।</b>\n\n"
                         f"🆔 <b>इंटरनल आईडी:</b> {internal_post_id}\n"
-                        f"🛠️ <b>किए गए बदलाव:</b> एआई वॉटरमार्क जोड़ा गया (AI Watermark Added)\n"
+                        f"🛠️ <b>किए गए बदलाव:</b> एआई वॉटरमार्क जोड़ा गया (AI Headline added)\n"
+                        f"📝 <b>AI हेडलाइन:</b> {headline}\n"
                         f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
                         f"📊 <b>स्टेटस:</b> Success"
                     )

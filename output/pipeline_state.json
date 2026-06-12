@@ -1,16 +1,32 @@
 {
     "https://nitter.net/FIFAWorldCup/status/2065399884895928688#m": {
-        "status": "DOWNLOADED",
-        "telegram_msg_id": "24",
-        "telegram_file_id": "AgACAgUAAxkDAAMYaivyU7Y8oEOGVwWZGl6gt3qk9FgAAuEPaxv-sWFV_s29sz2lEhMBAAMCAAN5AAM8BA",
+        "status": "UPLOADED",
+        "telegram_msg_id": "30",
+        "telegram_file_id": "AgACAgUAAxkDAAMeaiv3BvNwt0ShnWtnT3z6odDHqBsAAu0Paxv-sWFVoE9ih6Nx6O0BAAMCAAN3AAM8BA",
         "title": "USA at the #FIFAWorldCup \ud83c\uddfa\ud83c\uddf8\u26bd\ufe0f",
-        "profile": "FIFAWorldCup"
+        "profile": "FIFAWorldCup",
+        "internal_post_id": "FWC_1781266149",
+        "fb_post_id": "1094922960379153_122098160175360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122098160175360902"
     },
     "https://nitter.net/FIFAWorldCup/status/2065373548101669043#m": {
-        "status": "DOWNLOADED",
-        "telegram_msg_id": "27",
-        "telegram_file_id": "AgACAgUAAxkDAAMbaiv0Jwi1ItcTdtHokdh_sTiy1ZQAAucPaxv-sWFVWryAcrMYogEBAAMCAAN5AAM8BA",
+        "status": "UPLOADED",
+        "telegram_msg_id": "31",
+        "telegram_file_id": "AgACAgUAAxkDAAMfaiv3OG_QXygOGTH2g6IKdDEyUhsAAu4Paxv-sWFVM1D1D3kJXSoBAAMCAAN3AAM8BA",
         "title": "Ready for day 2\ufe0f\u20e3\n\n#FIFAWorldCup",
-        "profile": "FIFAWorldCup"
+        "profile": "FIFAWorldCup",
+        "internal_post_id": "FWC_1781266199",
+        "fb_post_id": "1094922960379153_122098160271360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122098160271360902"
+    },
+    "https://nitter.net/FIFAWorldCup/status/2065403742917108210#m": {
+        "status": "UPLOADED",
+        "telegram_msg_id": "32",
+        "telegram_file_id": "AgACAgUAAxkDAAMgaiv3TD26IOKjRZEc0eEGzQWrKMUAAu8Paxv-sWFVwvvmm766mwYBAAMCAAN3AAM8BA",
+        "title": "Coming up on day two \ud83d\udd1c\n\n#FIFAWorldCup",
+        "profile": "FIFAWorldCup",
+        "internal_post_id": "FWC_1781266249",
+        "fb_post_id": "1094922960379153_122098160763360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122098160763360902"
     }
 }
