@@ -4,19 +4,9 @@ import logging
 from dotenv import load_dotenv
 from src.scraper.twitter_scraper import get_latest_photo_tweet, download_image
 from src.telegram.reporter import send_telegram_photo, send_telegram_message
+from src.state_manager import load_state, update_post_status
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-def load_processed_tweets():
-    if not os.path.exists("output/processed_tweets.txt"):
-        return set()
-    with open("output/processed_tweets.txt", "r") as f:
-        return set(line.strip() for line in f)
-
-def save_processed_tweet(tweet_url):
-    os.makedirs("output", exist_ok=True)
-    with open("output/processed_tweets.txt", "a") as f:
-        f.write(f"{tweet_url}\n")
 
 def run_agent_1():
     logging.info("Starting Agent 1: Downloader")
@@ -24,7 +14,8 @@ def run_agent_1():
     profiles_str = os.getenv("TWITTER_SOURCE_PROFILE", "FIFAWorldCup,Cristiano")
     profiles = [p.strip() for p in profiles_str.split(',') if p.strip()]
     
-    processed = load_processed_tweets()
+    state = load_state()
+    processed = set(state.keys())
     
     tweet = get_latest_photo_tweet(profiles, processed)
     if not tweet:
@@ -45,10 +36,28 @@ def run_agent_1():
         )
         res = send_telegram_photo(download_path, caption)
         if res and res.get("ok"):
-            logging.info(f"Sent DOWNLOADED status to Telegram. Message ID: {res['result']['message_id']}")
-            save_processed_tweet(tweet['url'])
+            msg_id = str(res['result']['message_id'])
+            # Extract highest res photo file_id
+            photos = res['result'].get('photo', [])
+            file_id = photos[-1]['file_id'] if photos else None
+            
+            logging.info(f"Sent DOWNLOADED status to Telegram. Message ID: {msg_id}")
+            
+            # Save to JSON state manager
+            update_post_status(
+                post_id=tweet['url'],
+                status="DOWNLOADED",
+                telegram_msg_id=msg_id,
+                telegram_file_id=file_id,
+                title=tweet['title'],
+                profile=tweet['profile']
+            )
         else:
             logging.error("Failed to send photo to Telegram.")
+            
+        # Clean up image
+        if os.path.exists(download_path):
+            os.remove(download_path)
     else:
         logging.error("Failed to download image from Twitter.")
 

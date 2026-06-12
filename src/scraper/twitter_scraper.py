@@ -35,7 +35,12 @@ def get_latest_photo_tweet(profiles, processed_urls):
             logging.info(f"Scanning profile: {profile} via {rss_url}")
             
             try:
-                feed = feedparser.parse(rss_url)
+                from src.http_client import get_retry_session
+                session = get_retry_session(retries=3)
+                resp = session.get(rss_url, timeout=10)
+                resp.raise_for_status()
+                feed = feedparser.parse(resp.content)
+                
                 if not feed.entries:
                     continue
                     
@@ -90,8 +95,10 @@ def get_latest_photo_tweet(profiles, processed_urls):
     return None
 
 def download_image(url, output_path):
+    from src.http_client import get_retry_session
     try:
-        response = requests.get(url, timeout=10)
+        session = get_retry_session(retries=3)
+        response = session.get(url, timeout=15)
         response.raise_for_status()
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, 'wb') as f:

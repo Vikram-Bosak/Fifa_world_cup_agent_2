@@ -52,5 +52,5 @@ jobs:
       - name: Commit Processed State
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update processed pipeline state"
-          file_pattern: "output/*.txt"
+            commit_message: "chore: update processed pipeline state"
+            file_pattern: "output/*.json"

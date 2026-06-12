@@ -4,19 +4,9 @@ import requests
 import logging
 from dotenv import load_dotenv
 from src.telegram.reporter import download_telegram_photo, send_telegram_message
+from src.state_manager import get_posts_by_status, update_post_status
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-def load_processed_msgs():
-    if not os.path.exists("output/processed_agent3.txt"):
-        return set()
-    with open("output/processed_agent3.txt", "r") as f:
-        return set(line.strip() for line in f)
-
-def save_processed_msg(msg_id):
-    os.makedirs("output", exist_ok=True)
-    with open("output/processed_agent3.txt", "a") as f:
-        f.write(f"{msg_id}\n")
 
 def upload_to_facebook(image_path, text_content):
     access_token = os.getenv("FACEBOOK_ACCESS_TOKEN")
@@ -27,11 +17,13 @@ def upload_to_facebook(image_path, text_content):
         return False, None
         
     url = f"https://graph.facebook.com/{page_id}/photos"
+    from src.http_client import get_retry_session
     try:
+        session = get_retry_session(retries=3)
         with open(image_path, 'rb') as image_file:
             files = {'source': image_file}
             data = {'message': text_content, 'access_token': access_token}
-            response = requests.post(url, files=files, data=data)
+            response = session.post(url, files=files, data=data, timeout=30)
             response.raise_for_status()
             result = response.json()
             post_id = result.get('post_id', result.get('id'))
@@ -48,64 +40,56 @@ def run_agent_3():
         logging.error("Telegram bot token missing.")
         return
         
-    processed = load_processed_msgs()
-    url = f"https://api.telegram.org/bot{bot_token}/getUpdates"
-    try:
-        response = requests.get(url)
-        updates = response.json().get('result', [])
-    except Exception as e:
-        logging.error(f"Error fetching updates: {e}")
+    pending_posts = get_posts_by_status("EDITED")
+    if not pending_posts:
+        logging.info("No EDITED posts to upload.")
         return
         
-    for update in sorted(updates, key=lambda x: x.get('update_id', 0)):
-        message = update.get('channel_post') or update.get('message')
-        if not message:
+    for post_id, data in pending_posts.items():
+        file_id = data.get("telegram_file_id")
+        title = data.get("title", "FIFA Update")
+        msg_id = data.get("telegram_msg_id")
+        internal_post_id = data.get("internal_post_id", "UNKNOWN")
+        
+        if not file_id:
+            logging.error(f"Missing file_id for post {post_id}")
             continue
             
-        msg_id = str(message.get('message_id'))
-        caption = message.get('caption', '')
+        logging.info(f"Processing EDITED message: {msg_id}")
+        upload_path = f"output/upload_{msg_id}.jpg"
         
-        if "STATUS: EDITED" in caption and msg_id not in processed:
-            logging.info(f"Found EDITED message: {msg_id}")
+        if download_telegram_photo(file_id, upload_path):
+            facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Football #Soccer"
             
-            photos = message.get('photo')
-            if not photos:
-                continue
+            success, fb_post_id = upload_to_facebook(upload_path, facebook_text)
+            if success and fb_post_id:
+                page_id = os.getenv("FACEBOOK_PAGE_ID", "me")
+                url_post_id = fb_post_id.split('_')[-1] if '_' in fb_post_id else fb_post_id
+                public_url = f"https://www.facebook.com/{page_id}/posts/{url_post_id}"
                 
-            file_id = photos[-1]['file_id']
-            upload_path = f"output/upload_{msg_id}.jpg"
+                report_text = (
+                    f"✅ <b>STATUS: SUCCESS</b>\n\n"
+                    f"📝 <b>Title:</b> {title}\n"
+                    f"🆔 <b>Internal Post ID:</b> {internal_post_id}\n"
+                    f"🌐 <b>Facebook Post ID:</b> {fb_post_id}\n"
+                    f"⏱️ <b>Time:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
+                    f"🔗 <a href='{public_url}'>View on Facebook</a>"
+                )
+                send_telegram_message(report_text, reply_to_message_id=msg_id)
+                
+                update_post_status(
+                    post_id=post_id,
+                    status="UPLOADED",
+                    fb_post_id=fb_post_id,
+                    public_url=public_url
+                )
+                logging.info(f"Successfully uploaded post {post_id} to Facebook.")
             
-            if download_telegram_photo(file_id, upload_path):
-                # Extract Title and Post ID
-                title = "FIFA Update"
-                post_id_internal = "UNKNOWN"
-                for line in caption.split('\n'):
-                    if line.startswith("TITLE:"):
-                        title = line.replace("TITLE:", "").strip()
-                    elif line.startswith("POST_ID:"):
-                        post_id_internal = line.replace("POST_ID:", "").strip()
-                
-                facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Football #Soccer"
-                
-                success, fb_post_id = upload_to_facebook(upload_path, facebook_text)
-                if success and fb_post_id:
-                    page_id = os.getenv("FACEBOOK_PAGE_ID", "me")
-                    url_post_id = fb_post_id.split('_')[-1] if '_' in fb_post_id else fb_post_id
-                    public_url = f"https://www.facebook.com/{page_id}/posts/{url_post_id}"
-                    
-                    report_text = (
-                        f"✅ <b>STATUS: SUCCESS</b>\n\n"
-                        f"📝 <b>Title:</b> {title}\n"
-                        f"🆔 <b>Internal Post ID:</b> {post_id_internal}\n"
-                        f"🌐 <b>Facebook Post ID:</b> {fb_post_id}\n"
-                        f"⏱️ <b>Time:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
-                        f"🔗 <a href='{public_url}'>View on Facebook</a>"
-                    )
-                    send_telegram_message(report_text, reply_to_message_id=msg_id)
-                    save_processed_msg(msg_id)
-                    logging.info("Successfully processed 1 post. Stopping.")
-                    break
+            # Clean up
+            if os.path.exists(upload_path):
+                os.remove(upload_path)
 
 if __name__ == "__main__":
     load_dotenv()
     run_agent_3()
+
