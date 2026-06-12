@@ -35,14 +35,17 @@ def run_agent_1():
     
     download_path = f"output/temp_agent1_{int(time.time())}.jpg"
     if download_image(tweet['image_url'], download_path):
+        internal_post_id = f"FWC_{int(time.time())}"
+        github_run_id = os.getenv('GITHUB_RUN_ID', 'manual')
         caption = (
-            f"✅ <b>इमेज सफलतापूर्वक डाउनलोड हो गई।</b>\n\n"
-            f"🆔 <b>पोस्ट यूनिक आईडी:</b> {tweet['url']}\n"
-            f"📌 <b>टाइटल:</b> {tweet['title'][:100]}\n"
-            f"📝 <b>कैप्शन:</b> {tweet.get('caption', '')[:200]}...\n"
-            f"👤 <b>सोर्स प्रोफाइल:</b> {tweet['profile']}\n"
-            f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
-            f"📊 <b>स्टेटस:</b> Success"
+            f"✅ Download Successfully Completed\n"
+            f"🎬 Photo Name:\n{tweet['title'][:100]}\n\n"
+            f"📥 Download Status: Success\n\n"
+            f"👤 Source Profile:\n{tweet['profile']}\n\n"
+            f"Original File: {internal_post_id}.jpg\n\n"
+            f"🕒 Timestamp:\n{time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
+            f"📦 GitHub Repository:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2\n\n"
+            f"📄 Workflow Run:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2/actions/runs/{github_run_id}"
         )
         res = send_telegram_photo(download_path, caption)
         if res and res.get("ok"):
@@ -60,7 +63,8 @@ def run_agent_1():
                 telegram_file_id=file_id,
                 title=tweet['title'],
                 profile=tweet['profile'],
-                caption=tweet.get('caption', '')
+                caption=tweet.get('caption', ''),
+                internal_post_id=internal_post_id
             )
         else:
             error_msg = "❌ <b>Error:</b> Failed to send DOWNLOADED photo to Telegram."

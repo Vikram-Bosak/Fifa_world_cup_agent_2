@@ -37,6 +37,8 @@ def run_agent_2():
         raw_path = f"output/raw_{msg_id}.jpg"
         edited_path = f"output/edited_{msg_id}.jpg"
         
+        internal_post_id = data.get("internal_post_id", "UNKNOWN")
+        
         try:
             if download_telegram_photo(file_id, raw_path):
                 # Generate AI Headline
@@ -44,16 +46,16 @@ def run_agent_2():
                 
                 # Edit Image
                 if add_watermark(raw_path, edited_path, logo_path="assets/logo/logo.png", watermark_text=headline):
-                    # Generate Unique Post ID
-                    internal_post_id = f"FWC_{int(time.time())}"
-                    
+                    github_run_id = os.getenv('GITHUB_RUN_ID', 'manual')
                     report = (
-                        f"✅ <b>एडिटिंग सफलतापूर्वक पूरी हुई।</b>\n\n"
-                        f"🆔 <b>इंटरनल आईडी:</b> {internal_post_id}\n"
-                        f"🛠️ <b>किए गए बदलाव:</b> एआई वॉटरमार्क जोड़ा गया (AI Headline added)\n"
-                        f"📝 <b>AI हेडलाइन:</b> {headline}\n"
-                        f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
-                        f"📊 <b>स्टेटस:</b> Success"
+                        f"✅ Editing Successfully Completed\n"
+                        f"🎬 Photo Name:\n{title}\n\n"
+                        f"🛠️ Editing Status: Success\n\n"
+                        f"📝 Applied Edits:\nAI Headline added, Branding Watermark\n\n"
+                        f"Original File: {internal_post_id}.jpg\n\n"
+                        f"🕒 Timestamp:\n{time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
+                        f"📦 GitHub Repository:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2\n\n"
+                        f"📄 Workflow Run:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2/actions/runs/{github_run_id}"
                     )
                     
                     res = send_telegram_photo(edited_path, report, reply_to_message_id=msg_id)
