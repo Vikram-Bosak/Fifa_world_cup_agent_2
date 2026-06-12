@@ -1,5 +1,6 @@
 import os
 import time
+import random
 import requests
 import logging
 from dotenv import load_dotenv
@@ -63,6 +64,13 @@ def run_agent_3():
         
         try:
             if download_telegram_photo(file_id, upload_path):
+                # Apply human-like random delay before uploading
+                # Delay between 2 minutes (120s) and 15 minutes (900s)
+                delay_seconds = random.randint(120, 900)
+                delay_minutes = delay_seconds // 60
+                logging.info(f"Applying random delay of {delay_minutes} minutes ({delay_seconds} seconds) for human-like behavior...")
+                time.sleep(delay_seconds)
+                
                 facebook_text = generate_facebook_post(title, description)
                 
                 success, fb_response = upload_to_facebook(upload_path, facebook_text)
@@ -77,6 +85,7 @@ def run_agent_3():
                         f"🌐 <b>प्लेटफ़ॉर्म:</b> Facebook\n"
                         f"🔗 <b>पोस्ट URL:</b> {public_url}\n"
                         f"🕒 <b>समय:</b> {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n"
+                        f"⏳ <b>Human Delay:</b> {delay_minutes} minutes\n"
                         f"📊 <b>स्टेटस:</b> Success"
                     )
                     send_telegram_message(report_text, reply_to_message_id=msg_id)
