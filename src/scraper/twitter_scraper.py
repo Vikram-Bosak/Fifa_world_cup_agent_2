@@ -1,0 +1,102 @@
+import os
+import requests
+import feedparser
+from bs4 import BeautifulSoup
+import logging
+import random
+from datetime import datetime, timezone
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+NITTER_INSTANCES = [
+    "https://nitter.net",
+    "https://nitter.cz",
+    "https://nitter.fdn.fr",
+    "https://nitter.1d4.us",
+    "https://nitter.kavin.rocks"
+]
+
+def get_latest_photo_tweet(profiles, processed_urls):
+    """
+    Scans multiple profiles and returns the latest UNPROCESSED PHOTO tweet.
+    Ensures that Videos and GIFs are strictly ignored.
+    """
+    random.shuffle(NITTER_INSTANCES)
+    
+    # We will collect all valid photo tweets across profiles, then sort by date if possible,
+    # or just return the first valid one we find.
+    valid_tweets = []
+    
+    for instance in NITTER_INSTANCES:
+        success_on_instance = False
+        
+        for profile in profiles:
+            rss_url = f"{instance}/{profile.strip()}/rss"
+            logging.info(f"Scanning profile: {profile} via {rss_url}")
+            
+            try:
+                feed = feedparser.parse(rss_url)
+                if not feed.entries:
+                    continue
+                    
+                success_on_instance = True
+                
+                for entry in feed.entries:
+                    link = entry.link
+                    
+                    if link in processed_urls:
+                        continue # Skip already processed
+                        
+                    title = entry.title
+                    description = entry.description
+                    
+                    # Check for video/gif indicators in the description
+                    soup = BeautifulSoup(description, 'html.parser')
+                    
+                    # If it has a video tag or mentions video/gif, skip it
+                    if soup.find('video') or 'video.twimg.com' in description or 'tweet-video' in description:
+                        logging.info(f"Skipping {link} - Contains Video/GIF")
+                        continue
+                        
+                    # Find images
+                    img_tags = soup.find_all('img')
+                    valid_image_url = None
+                    
+                    for img in img_tags:
+                        img_url = img.get('src')
+                        # Filter out profile pictures, emojis, or small icons
+                        if img_url and 'profile_images' not in img_url and 'emoji' not in img_url:
+                            valid_image_url = f"{instance}{img_url}" if img_url.startswith('/') else img_url
+                            break
+                            
+                    if valid_image_url:
+                        # Found a valid photo tweet
+                        valid_tweets.append({
+                            "title": title,
+                            "url": link,
+                            "image_url": valid_image_url,
+                            "profile": profile
+                        })
+                        
+            except Exception as e:
+                logging.error(f"Error fetching from {rss_url}: {e}")
+                continue
+                
+        if success_on_instance and valid_tweets:
+            # We got some valid tweets, return the first one (most recent usually)
+            return valid_tweets[0]
+            
+    logging.warning("Could not fetch a valid new photo tweet from any profile/instance.")
+    return None
+
+def download_image(url, output_path):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, 'wb') as f:
+            f.write(response.content)
+        return True
+    except Exception as e:
+        logging.error(f"Failed to download image from {url}: {e}")
+        return False
