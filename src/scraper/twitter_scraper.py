@@ -67,9 +67,13 @@ def get_latest_photo_tweet(profiles, processed_urls):
                     description = entry.description
                     
                     # Check for video/gif indicators in the description
+                    if '>Video<' in description or '>GIF<' in description or 'video_thumb' in description:
+                        logging.info(f"Skipping {link} - Contains Video/GIF")
+                        continue
+                        
                     soup = BeautifulSoup(description, 'html.parser')
                     
-                    # If it has a video tag or mentions video/gif, skip it
+                    # Additional check for video tags just in case
                     if soup.find('video') or 'video.twimg.com' in description or 'tweet-video' in description:
                         logging.info(f"Skipping {link} - Contains Video/GIF")
                         continue
