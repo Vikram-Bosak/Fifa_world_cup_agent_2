@@ -61,7 +61,7 @@ def run_agent_3():
         
         try:
             if download_telegram_photo(file_id, upload_path):
-                facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Football #Soccer"
+                facebook_text = f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n#FIFAWorldCup #Soccer #USMNT"
                 
                 success, fb_response = upload_to_facebook(upload_path, facebook_text)
                 if success and fb_response:
