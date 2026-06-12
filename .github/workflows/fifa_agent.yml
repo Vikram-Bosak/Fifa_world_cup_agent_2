@@ -42,6 +42,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: python agent_2_edit.py
         
       - name: Run Agent 3 (Uploader)
@@ -50,6 +51,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
         run: python agent_3_upload.py
         
       - name: Commit Processed State
