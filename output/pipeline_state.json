@@ -173,12 +173,25 @@
         "public_url": "https://www.facebook.com/1094922960379153/posts/122099079405360902"
     },
     "https://nitter.net/FIFAWorldCup/status/2065890701133635693#m": {
-        "status": "EDITED",
+        "status": "UPLOADED",
         "telegram_msg_id": "78",
         "telegram_file_id": "AgACAgUAAxkDAANOai3FWCLKahrK_NfGWMkregRWJyIAAlcTaxtfwGlVwpcZCn8s1KEBAAMCAAN3AAM8BA",
         "title": "It\u2019s time to vote \ufe0ffor your @MichelobUltra Superior Player Of The Match! \ud83d\udc51\n\n#FIFAWorldCup #SuperiorPOTM",
         "profile": "FIFAWorldCup",
         "caption": "It\u2019s time to vote \ufe0ffor your @MichelobUltra Superior Player Of The Match! \ud83d\udc51 #FIFAWorldCup #SuperiorPOTM",
-        "internal_post_id": "FWC_1781384523"
+        "internal_post_id": "FWC_1781384523",
+        "fb_post_id": "1094922960379153_122099198907360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122099198907360902"
+    },
+    "https://nitter.net/FIFAWorldCup/status/2065925480973226370#m": {
+        "status": "UPLOADED",
+        "telegram_msg_id": "81",
+        "telegram_file_id": "AgACAgUAAxkDAANRai3fkQMaOWAa4bdM1aQKymx85kIAApgPaxtfwHFVcziNZ04xFVkBAAMCAAN3AAM8BA",
+        "title": "Saibari. \ud83e\udee1\ud83c\uddf2\ud83c\udde6\n\n#FIFAWorldCup",
+        "profile": "FIFAWorldCup",
+        "caption": "Saibari. \ud83e\udee1\ud83c\uddf2\ud83c\udde6 #FIFAWorldCup",
+        "internal_post_id": "FWC_1781391226",
+        "fb_post_id": "1094922960379153_122099202435360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122099202435360902"
     }
 }
