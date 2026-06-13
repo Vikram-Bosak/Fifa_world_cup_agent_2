@@ -140,12 +140,25 @@
         "public_url": "https://www.facebook.com/1094922960379153/posts/122098914933360902"
     },
     "https://nitter.net/FIFAWC26Updates/status/2065817818495693031#m": {
-        "status": "EDITED",
+        "status": "UPLOADED",
         "telegram_msg_id": "68",
         "telegram_file_id": "AgACAgUAAxkDAANEai12uVMdLoSmWFCHtOOHPvY7zEQAAswQaxv-sWlV7Vtfyw8Id8gBAAMCAAN3AAM8BA",
         "title": "One tournament. Endless memories. \u26bd\ud83c\udfc6",
         "profile": "FIFAWC26Updates",
         "caption": "One tournament. Endless memories. \u26bd\ud83c\udfc6",
-        "internal_post_id": "FWC_1781364376"
+        "internal_post_id": "FWC_1781364376",
+        "fb_post_id": "1094922960379153_122099018877360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122099018877360902"
+    },
+    "https://nitter.net/FIFAWorldCup/status/2065830303487410271#m": {
+        "status": "UPLOADED",
+        "telegram_msg_id": "71",
+        "telegram_file_id": "AgACAgUAAxkDAANHai2O0Rn4mZLFcMKs4Jhy7WkqCq8AAuUQaxv-sWlVxLGn2EET_38BAAMCAAN3AAM8BA",
+        "title": "Two decades of Lionel Messi at the #FIFAWorldCup \ud83c\udde6\ud83c\uddf7\ud83d\udcab",
+        "profile": "FIFAWorldCup",
+        "caption": "Two decades of Lionel Messi at the #FIFAWorldCup \ud83c\udde6\ud83c\uddf7\ud83d\udcab",
+        "internal_post_id": "FWC_1781370564",
+        "fb_post_id": "1094922960379153_122099023161360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122099023161360902"
     }
 }
