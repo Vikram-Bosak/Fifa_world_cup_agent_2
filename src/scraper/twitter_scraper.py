@@ -14,6 +14,53 @@ def get_latest_photo_tweet(profiles, processed_urls):
 async def _get_latest_photo_tweet_async(profiles, processed_urls):
     try:
         from twikit import Client
+        from twikit.user import User
+        # Monkeypatch User.__init__ to fix 'urls' KeyError in twikit==2.1.2
+        if not hasattr(User, '_patched_for_urls'):
+            orig_init = User.__init__
+            def patched_init(self, client, data):
+                if 'legacy' in data:
+                    legacy = data['legacy']
+                    # Patch all potential missing keys in legacy
+                    defaults = {
+                        'location': '',
+                        'description': '',
+                        'pinned_tweet_ids_str': [],
+                        'verified': False,
+                        'possibly_sensitive': False,
+                        'can_dm': False,
+                        'can_media_tag': False,
+                        'want_retweets': False,
+                        'default_profile': False,
+                        'default_profile_image': False,
+                        'has_custom_timelines': False,
+                        'followers_count': 0,
+                        'fast_followers_count': 0,
+                        'normal_followers_count': 0,
+                        'friends_count': 0,
+                        'favourites_count': 0,
+                        'listed_count': 0,
+                        'media_count': 0,
+                        'statuses_count': 0,
+                        'is_translator': False,
+                        'translator_type': '',
+                        'withheld_in_countries': []
+                    }
+                    for k, v in defaults.items():
+                        if k not in legacy:
+                            legacy[k] = v
+                            
+                    if 'entities' in legacy:
+                        entities = legacy['entities']
+                        if 'description' in entities and 'urls' not in entities['description']:
+                            entities['description']['urls'] = []
+                        if 'url' in entities and 'urls' not in entities['url']:
+                            if 'url' not in entities:
+                                entities['url'] = {}
+                            entities['url']['urls'] = []
+                orig_init(self, client, data)
+            User.__init__ = patched_init
+            User._patched_for_urls = True
     except ImportError:
         logging.error("twikit is not installed. Run: pip install twikit")
         return None
