@@ -33,7 +33,7 @@ def send_telegram_message(text, reply_to_message_id=None):
 
 def send_telegram_report_message(text, reply_to_message_id=None):
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_REPORT_CHAT_ID")
+    chat_id = os.getenv("TELEGRAM_REPORT_CHAT_ID") or os.getenv("TELEGRAM_CHAT_ID")
     
     if not bot_token or not chat_id:
         logging.error("Telegram report credentials missing. Please set TELEGRAM_REPORT_CHAT_ID in .env.")
