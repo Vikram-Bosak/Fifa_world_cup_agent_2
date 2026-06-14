@@ -1,122 +1,130 @@
 import os
-import requests
-import feedparser
-from bs4 import BeautifulSoup
+import time
 import logging
 import random
-import time
-import calendar
+import asyncio
 from datetime import datetime, timezone
+from bs4 import BeautifulSoup
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-NITTER_INSTANCES = [
-    "https://nitter.net",
-    "https://nitter.cz",
-    "https://nitter.fdn.fr",
-    "https://nitter.1d4.us",
-    "https://nitter.kavin.rocks"
-]
-
 def get_latest_photo_tweet(profiles, processed_urls):
-    """
-    Scans multiple profiles and returns the latest UNPROCESSED PHOTO tweet.
-    Ensures that Videos and GIFs are strictly ignored.
-    Also ensures the tweet is from the last 2 hours.
-    """
-    random.shuffle(NITTER_INSTANCES)
-    
-    # We will collect all valid photo tweets across profiles, then sort by date if possible,
-    # or just return the first valid one we find.
-    valid_tweets = []
-    
-    for instance in NITTER_INSTANCES:
-        success_on_instance = False
+    return asyncio.run(_get_latest_photo_tweet_async(profiles, processed_urls))
+
+async def _get_latest_photo_tweet_async(profiles, processed_urls):
+    try:
+        from twikit import Client
+    except ImportError:
+        logging.error("twikit is not installed. Run: pip install twikit")
+        return None
         
-        for profile in profiles:
-            rss_url = f"{instance}/{profile.strip()}/rss"
-            logging.info(f"Scanning profile: {profile} via {rss_url}")
+    client = Client('en-US')
+    
+    # Check credentials
+    username = os.getenv("TWITTER_USERNAME")
+    email = os.getenv("TWITTER_EMAIL")
+    password = os.getenv("TWITTER_PASSWORD")
+    
+    # Try to load cookies
+    cookies_path = 'cookies.json'
+    try:
+        if os.path.exists(cookies_path):
+            client.load_cookies(cookies_path)
+            logging.info("Loaded Twitter cookies.")
+        else:
+            if not all([username, email, password]):
+                logging.error("Missing Twitter credentials in .env and no cookies.json found.")
+                return None
+            logging.info("Logging into Twitter...")
+            await client.login(auth_info_1=username, auth_info_2=email, password=password)
+            client.save_cookies(cookies_path)
+            logging.info("Successfully logged in and saved cookies.")
+    except Exception as e:
+        logging.error(f"Twitter Authentication failed: {e}")
+        return None
+        
+    found_any_in_2h = False
+    found_duplicate_in_2h = False
+    
+    for profile in profiles:
+        logging.info(f"Scanning profile: {profile} via twikit")
+        try:
+            user = await client.get_user_by_screen_name(profile.strip())
+            tweets = await user.get_tweets('Tweets', count=10)
             
-            try:
-                from src.http_client import get_retry_session
-                session = get_retry_session(retries=3)
-                resp = session.get(rss_url, timeout=10)
-                resp.raise_for_status()
-                feed = feedparser.parse(resp.content)
+            for tweet in tweets:
+                # Check age (within last 2 hours)
+                try:
+                    pub_time = datetime.strptime(tweet.created_at, '%a %b %d %H:%M:%S %z %Y')
+                    age_seconds = (datetime.now(timezone.utc) - pub_time).total_seconds()
+                    if age_seconds > 7200:
+                        continue
+                    found_any_in_2h = True
+                except Exception as e:
+                    logging.warning(f"Could not parse tweet time: {tweet.created_at} - {e}")
+                    pass
                 
-                if not feed.entries:
+                # Construct tweet URL
+                url = f"https://x.com/{profile.strip()}/status/{tweet.id}"
+                
+                if url in processed_urls:
+                    found_duplicate_in_2h = True
                     continue
                     
-                success_on_instance = True
+                text = tweet.text
                 
-                for entry in feed.entries:
-                    link = entry.link
+                # Check for video/gif indicators in text
+                if '>Video<' in text or '>GIF<' in text:
+                    continue
                     
-                    if link in processed_urls:
-                        continue # Skip already processed
-                        
-                    # Check if tweet is within the last 2 hours (7200 seconds)
-                    if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                        pub_ts = calendar.timegm(entry.published_parsed)
-                        age_seconds = time.time() - pub_ts
-                        if age_seconds > 7200:
-                            logging.info(f"Skipping {link} - Older than 2 hours (Age: {int(age_seconds/60)} mins)")
-                            continue
-                            
-                    title = entry.title
-                    description = entry.description
+                # Check media
+                if not hasattr(tweet, 'media') or not tweet.media:
+                    continue
                     
-                    # Check for video/gif indicators in the description
-                    if '>Video<' in description or '>GIF<' in description or 'video_thumb' in description:
-                        logging.info(f"Skipping {link} - Contains Video/GIF")
-                        continue
-                        
-                    soup = BeautifulSoup(description, 'html.parser')
-                    
-                    # Additional check for video tags just in case
-                    if soup.find('video') or 'video.twimg.com' in description or 'tweet-video' in description:
-                        logging.info(f"Skipping {link} - Contains Video/GIF")
-                        continue
-                        
-                    # Find images
-                    img_tags = soup.find_all('img')
-                    valid_image_url = None
-                    
-                    for img in img_tags:
-                        img_url = img.get('src')
-                        # Filter out profile pictures, emojis, or small icons
-                        if img_url and 'profile_images' not in img_url and 'emoji' not in img_url:
-                            valid_image_url = f"{instance}{img_url}" if img_url.startswith('/') else img_url
-                            break
-                            
-                    # Extract clean text caption
-                    clean_text = soup.get_text(separator=' ', strip=True)
-                    p_tag = soup.find('p')
-                    if p_tag:
-                        clean_text = p_tag.get_text(separator=' ', strip=True)
-                        
-                    if valid_image_url:
-                        # Found a valid photo tweet
-                        valid_tweets.append({
-                            "title": title,
-                            "caption": clean_text,
-                            "url": link,
-                            "image_url": valid_image_url,
-                            "profile": profile
-                        })
-                        
-            except Exception as e:
-                logging.error(f"Error fetching from {rss_url}: {e}")
-                continue
+                has_video = False
+                valid_image_url = None
                 
-        if success_on_instance and valid_tweets:
-            # We got some valid tweets, return the first one (most recent usually)
-            return valid_tweets[0]
+                for m in tweet.media:
+                    if m['type'] in ['video', 'animated_gif']:
+                        has_video = True
+                        break
+                    if m['type'] == 'photo' and not valid_image_url:
+                        valid_image_url = m['media_url_https']
+                        
+                if has_video or not valid_image_url:
+                    continue
+                    
+                # Found a valid tweet
+                logging.info(f"Found valid tweet from {profile}. Stopping scan.")
+                return {
+                    "title": text[:100].replace('\n', ' '), # Safe title
+                    "caption": text,
+                    "url": url,
+                    "image_url": valid_image_url,
+                    "profile": profile
+                }
+                
+        except Exception as e:
+            logging.error(f"Error fetching tweets for {profile}: {e}")
+            await asyncio.sleep(2)
+            continue
             
-    logging.warning("Could not fetch a valid new photo tweet from any profile/instance.")
-    return None
+    # If we get here, no unprocessed valid tweet was found
+    if found_duplicate_in_2h:
+        return {
+            "status": "SKIPPED",
+            "reason": "Content already processed.",
+            "checked_profiles": profiles
+        }
+    
+    return {
+        "status": "SKIPPED",
+        "reason": "No valid image found in the last 2 hours across all configured Twitter profiles.",
+        "checked_profiles": profiles
+    }
 
 def download_image(url, output_path):
+    import requests
     from src.http_client import get_retry_session
     try:
         session = get_retry_session(retries=3)

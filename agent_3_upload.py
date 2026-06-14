@@ -4,9 +4,8 @@ import random
 import requests
 import logging
 from dotenv import load_dotenv
-from src.telegram.reporter import download_telegram_photo, send_telegram_message
+from src.telegram.reporter import download_telegram_photo, send_telegram_report_message
 from src.state_manager import get_posts_by_status, update_post_status
-from src.ai_generator import generate_facebook_post
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -31,6 +30,10 @@ def upload_to_facebook(image_path, text_content):
             result = response.json()
             post_id = result.get('post_id', result.get('id'))
             return True, post_id
+    except requests.exceptions.HTTPError as e:
+        error_details = e.response.text if e.response else str(e)
+        logging.error(f"Failed to upload to Facebook (HTTP Error): {error_details}")
+        return False, f"API Error: {error_details}"
     except Exception as e:
         logging.error(f"Failed to upload to Facebook: {e}")
         return False, str(e)
@@ -48,23 +51,27 @@ def run_agent_3():
         logging.info("No EDITED posts to upload.")
         return
         
-    for post_id, data in pending_posts.items():
+    for content_id, data in pending_posts.items():
         file_id = data.get("telegram_file_id")
         title = data.get("title", "FIFA Update")
         description = data.get("caption", "")
         msg_id = data.get("telegram_msg_id")
-        internal_post_id = data.get("internal_post_id", "UNKNOWN")
+        source_url = data.get("source_url", "UNKNOWN")
         
         if not file_id:
-            logging.error(f"Missing file_id for post {post_id}")
+            logging.error(f"Missing file_id for post {content_id}")
             continue
             
-        logging.info(f"Processing EDITED message: {msg_id}")
+        logging.info(f"Processing EDITED message: {msg_id} (Content ID: {content_id})")
         
-        upload_path = f"output/upload_{msg_id}.jpg"
+        upload_path = f"output/{content_id}_final.jpg"
         
         try:
             if download_telegram_photo(file_id, upload_path):
+                # Verify that the correct Content ID file exists
+                if not os.path.exists(upload_path):
+                    raise FileNotFoundError(f"Content ID mismatch: Expected {upload_path} not found.")
+                
                 # Apply human-like random delay before uploading
                 # Delay between 2 minutes (120s) and 15 minutes (900s)
                 delay_seconds = random.randint(120, 900)
@@ -72,7 +79,7 @@ def run_agent_3():
                 logging.info(f"Applying random delay of {delay_minutes} minutes ({delay_seconds} seconds) for human-like behavior...")
                 time.sleep(delay_seconds)
                 
-                facebook_text = generate_facebook_post(title, description)
+                facebook_text = data.get("facebook_post", f"{title}\n\n{description}")
                 
                 success, fb_response = upload_to_facebook(upload_path, facebook_text)
                 if success and fb_response:
@@ -84,36 +91,39 @@ def run_agent_3():
                     github_run_id = os.getenv('GITHUB_RUN_ID', 'manual')
                     report_text = (
                         f"✅ Upload Successfully Completed\n"
+                        f"🆔 Content ID: {content_id}\n\n"
                         f"🎬 Photo Name:\n{title}\n\n"
                         f"📤 Facebook Upload Status: Success\n\n"
                         f"🏷️ SEO Title:\n{title}\n\n"
                         f"📝 Description:\n{facebook_text}\n\n"
-                        f"Original File: {internal_post_id}.jpg\n\n"
+                        f"🔗 Source URL:\n{source_url}\n\n"
+                        f"Facebook Post ID: {fb_post_id}\n\n"
                         f"🔗 Facebook Photo Post URL:\n{public_url}\n\n"
+                        f"🕒 Upload Time:\n{time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
                         f"📦 GitHub Repository:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2\n\n"
                         f"📄 Workflow Run:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2/actions/runs/{github_run_id}"
                     )
-                    send_telegram_message(report_text, reply_to_message_id=msg_id)
+                    send_telegram_report_message(report_text, reply_to_message_id=msg_id)
                     
                     update_post_status(
-                        post_id=post_id,
+                        content_id=content_id,
                         status="UPLOADED",
                         fb_post_id=fb_post_id,
                         public_url=public_url
                     )
-                    logging.info(f"Successfully uploaded post {post_id} to Facebook.")
+                    logging.info(f"Successfully uploaded post {content_id} to Facebook.")
                 else:
-                    error_msg = f"❌ <b>Error:</b> Failed to upload post {internal_post_id} to Facebook.\nDetails: {fb_response}"
+                    error_msg = f"❌ <b>Error:</b> Failed to upload post {content_id} to Facebook.\nDetails: {fb_response}"
                     logging.error(error_msg)
-                    send_telegram_message(error_msg, reply_to_message_id=msg_id)
+                    send_telegram_report_message(error_msg, reply_to_message_id=msg_id)
             else:
-                error_msg = f"❌ <b>Error:</b> Failed to download edited photo from Telegram for upload (Post {internal_post_id})"
+                error_msg = f"❌ <b>Error:</b> Failed to download edited photo from Telegram for upload (Post {content_id})"
                 logging.error(error_msg)
-                send_telegram_message(error_msg, reply_to_message_id=msg_id)
+                send_telegram_report_message(error_msg, reply_to_message_id=msg_id)
         except Exception as e:
             error_msg = f"❌ <b>Error:</b> Exception during upload process: {e}"
             logging.error(error_msg)
-            send_telegram_message(error_msg, reply_to_message_id=msg_id)
+            send_telegram_report_message(error_msg, reply_to_message_id=msg_id)
         finally:
             # Clean up
             if os.path.exists(upload_path):

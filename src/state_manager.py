@@ -2,6 +2,8 @@ import os
 import json
 import logging
 
+import datetime
+
 STATE_FILE = "output/pipeline_state.json"
 
 def load_state():
@@ -22,22 +24,49 @@ def save_state(state):
     except Exception as e:
         logging.error(f"Failed to save state to {STATE_FILE}: {e}")
 
-def update_post_status(post_id, status, **kwargs):
+def generate_content_id():
+    state = load_state()
+    today_str = datetime.datetime.now().strftime("%Y%m%d")
+    prefix = f"FIFA-{today_str}-"
+    
+    # Find max sequence for today
+    max_seq = 0
+    for cid in state.keys():
+        if cid.startswith(prefix):
+            try:
+                seq = int(cid.split("-")[-1])
+                if seq > max_seq:
+                    max_seq = seq
+            except ValueError:
+                pass
+                
+    new_seq = max_seq + 1
+    return f"{prefix}{new_seq:04d}"
+
+def update_post_status(content_id, status, **kwargs):
     """
-    Updates the status of a specific post_id.
-    post_id is generally the tweet url or internal ID.
-    kwargs can be any additional metadata (telegram_msg_id, title, etc.)
+    Updates the status of a specific content_id.
     """
     state = load_state()
-    if post_id not in state:
-        state[post_id] = {}
+    if content_id not in state:
+        state[content_id] = {}
         
-    state[post_id]["status"] = status
+    state[content_id]["status"] = status
+    
+    # Add timestamp based on status
+    current_time = datetime.datetime.utcnow().isoformat() + "Z"
+    if status == "DOWNLOADED" and "download_time" not in state[content_id]:
+        state[content_id]["download_time"] = current_time
+    elif status == "EDITED" and "edit_time" not in state[content_id]:
+        state[content_id]["edit_time"] = current_time
+    elif status == "UPLOADED" and "upload_time" not in state[content_id]:
+        state[content_id]["upload_time"] = current_time
+        
     for k, v in kwargs.items():
-        state[post_id][k] = v
+        state[content_id][k] = v
         
     save_state(state)
-    return state[post_id]
+    return state[content_id]
 
 def get_posts_by_status(status):
     state = load_state()

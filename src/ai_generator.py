@@ -20,75 +20,42 @@ def get_ai_client():
         logging.error(f"Failed to initialize OpenAI client: {e}")
         return None
 
-def generate_headline(title, description=""):
+def analyze_and_generate_content(title, description, context=""):
     """
-    Generates a short, catchy, American English headline to overlay on the image.
-    Falls back to the original title if AI fails.
+    Analyzes the content and generates all required text formats:
+    - image_headline: Viral Style, short, catchy (max 7 words). No emojis.
+    - image_subheadline: Catchy subheadline with 1-2 relevant emojis to replace the original text.
+    - facebook_post: SEO-optimized full post description with hashtags and emojis.
+    - style: Selected visual style.
+    - confidence: Confidence score for the style.
     """
-    client = get_ai_client()
-    if not client:
-        logging.warning("No NVIDIA_API_KEY. Falling back to original title.")
-        return title[:50]
-        
-    prompt = (
-        "You are an expert American sports copywriter targeting a US audience. "
-        "Analyze the following post title and description, and generate a very short, punchy, "
-        "and catchy headline (MAXIMUM 5 to 7 WORDS) to be placed as text ON TOP of an image.\n\n"
-        "RULES:\n"
-        "1. MUST use strict American English spelling and terminology (e.g., 'Soccer' instead of 'Football', 'Favorite', 'Color', etc).\n"
-        "2. Do NOT use emojis.\n"
-        "3. Do NOT put quotes around the output.\n"
-        "4. Return ONLY the final text for the headline.\n\n"
-        f"TITLE: {title}\n"
-        f"DESCRIPTION: {description}"
-    )
+    import json
     
-    try:
-        completion = client.chat.completions.create(
-            model="nvidia/nemotron-3-ultra-550b-a55b",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            top_p=0.95,
-            max_tokens=1024,
-            extra_body={"chat_template_kwargs":{"enable_thinking":True},"reasoning_budget":1024},
-            stream=True
-        )
-        
-        final_text = ""
-        for chunk in completion:
-            if not chunk.choices:
-                continue
-            if chunk.choices[0].delta.content is not None:
-                final_text += chunk.choices[0].delta.content
-                
-        headline = final_text.strip().strip('"\'')
-        if headline:
-            return headline
-        return title[:50]
-    except Exception as e:
-        logging.error(f"AI headline generation failed: {e}")
-        return title[:50]
-
-def generate_facebook_post(title, description=""):
-    """
-    Generates an SEO-optimized Facebook post caption in American English.
-    Falls back to original title/description if AI fails.
-    """
     client = get_ai_client()
     if not client:
-        logging.warning("No NVIDIA_API_KEY. Falling back to default Facebook text.")
-        return f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n{description}\n\n#FIFAWorldCup #Soccer #USMNT"
+        logging.warning("No NVIDIA_API_KEY. Falling back to default text.")
+        return {
+            "image_headline": title[:50],
+            "image_subheadline": description[:100],
+            "facebook_post": f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n{description}\n\n#FIFAWorldCup #Soccer",
+            "style": "News Style",
+            "confidence": "50"
+        }
         
     prompt = (
-        "You are an expert Social Media Manager targeting a United States audience for a FIFA World Cup Facebook page. "
-        "Write a highly engaging, SEO-optimized Facebook post caption based on the following Title and Description.\n\n"
-        "RULES:\n"
-        "1. MUST use STRICT American English (e.g. 'Soccer', 'Color', 'Organize', 'Favorite'). NEVER use British/Indian variants.\n"
-        "2. Include an engaging hook, a brief summary or hype, and a clear Call-to-Action (CTA) for the US audience.\n"
-        "3. Include relevant US-centric hashtags (e.g. #Soccer, #USMNT, #FIFAWorldCup26, #TeamUSA).\n"
-        "4. Do NOT output anything other than the final Facebook post text.\n\n"
+        "You are an expert American sports copywriter and Social Media Manager targeting a US audience. "
+        "Analyze the following content carefully. Do NOT use clickbait or false facts. Retain the core meaning.\n\n"
+        "Generate a structured JSON response with exactly these 5 keys:\n"
+        "1. \"image_headline\": A short, punchy, viral headline (max 7 words) to go on top of the image. NO EMOJIS here.\n"
+        "2. \"image_subheadline\": A catchy subheadline to go at the bottom of the image. MUST INCLUDE 1-2 highly relevant emojis matching the topic (e.g. ⚽, 🏆, 🇺🇸, 🏴󠁧󠁢󠁳󠁣󠁴󠁿, 🔴). Do not just copy the original text.\n"
+        "3. \"facebook_post\": A highly engaging, SEO-optimized Facebook post caption in strict American English (e.g. 'Soccer'). Include a hook, summary, and US-centric hashtags.\n"
+        "4. \"style\": Select ONE visual style that best fits from: Story Style, Meme Style, Cinematic Style, Documentary Style, News Style, Motivational Style, Funny Style, Mixed Style, Other.\n"
+        "5. \"confidence\": A score from 0 to 100 on how sure you are about the style classification.\n\n"
+        "OUTPUT FORMAT MUST BE STRICTLY VALID JSON. DO NOT INCLUDE ANY MARKDOWN formatting like ```json ... ```. Just raw JSON.\n"
+        "CRITICAL: Escape all newlines as \\n and double quotes as \\\" inside your JSON strings so it does not break parsing.\n\n"
         f"TITLE: {title}\n"
-        f"DESCRIPTION: {description}"
+        f"DESCRIPTION: {description}\n"
+        f"CONTEXT: {context}"
     )
     
     try:
@@ -99,21 +66,32 @@ def generate_facebook_post(title, description=""):
             top_p=0.95,
             max_tokens=2048,
             extra_body={"chat_template_kwargs":{"enable_thinking":True},"reasoning_budget":2048},
-            stream=True
+            stream=False
         )
         
-        final_text = ""
-        for chunk in completion:
-            if not chunk.choices:
-                continue
-            if chunk.choices[0].delta.content is not None:
-                final_text += chunk.choices[0].delta.content
-                
-        post_text = final_text.strip()
-        if post_text:
-            return post_text
+        final_text = completion.choices[0].message.content.strip()
+        # Remove any markdown code block artifacts
+        if final_text.startswith("```json"):
+            final_text = final_text[7:]
+        if final_text.startswith("```"):
+            final_text = final_text[3:]
+        if final_text.endswith("```"):
+            final_text = final_text[:-3]
             
-        return f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n{description}\n\n#FIFAWorldCup #Soccer #USMNT"
+        data = json.loads(final_text.strip(), strict=False)
+        return {
+            "image_headline": data.get("image_headline", title[:50]),
+            "image_subheadline": data.get("image_subheadline", description[:100]),
+            "facebook_post": data.get("facebook_post", f"{title}\n\n{description}"),
+            "style": data.get("style", "News Style"),
+            "confidence": str(data.get("confidence", "80"))
+        }
     except Exception as e:
-        logging.error(f"AI Facebook post generation failed: {e}")
-        return f"⚽ FIFA World Cup Update 🏆\n\n{title}\n\n{description}\n\n#FIFAWorldCup #Soccer #USMNT"
+        logging.error(f"AI content generation failed or JSON parse error: {e}")
+        return {
+            "image_headline": title[:50],
+            "image_subheadline": description[:100],
+            "facebook_post": f"⚽ Update 🏆\n\n{title}\n\n{description}\n\n#FIFAWorldCup",
+            "style": "News Style",
+            "confidence": "50"
+        }

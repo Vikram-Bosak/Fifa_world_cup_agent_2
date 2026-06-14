@@ -31,6 +31,33 @@ def send_telegram_message(text, reply_to_message_id=None):
         logging.error(f"Failed to send message: {e}")
         return None
 
+def send_telegram_report_message(text, reply_to_message_id=None):
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_REPORT_CHAT_ID")
+    
+    if not bot_token or not chat_id:
+        logging.error("Telegram report credentials missing. Please set TELEGRAM_REPORT_CHAT_ID in .env.")
+        return None
+        
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    data = {
+        'chat_id': chat_id,
+        'text': text,
+        'parse_mode': 'HTML',
+        'disable_web_page_preview': True
+    }
+    if reply_to_message_id:
+        data['reply_to_message_id'] = reply_to_message_id
+        
+    try:
+        session = get_retry_session(retries=3)
+        response = session.post(url, data=data, timeout=15)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        logging.error(f"Failed to send report message: {e}")
+        return None
+
 def send_telegram_photo(photo_path, caption, reply_to_message_id=None):
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")

@@ -3,9 +3,9 @@ import time
 import logging
 from dotenv import load_dotenv
 from src.telegram.reporter import download_telegram_photo, send_telegram_photo, send_telegram_message
-from src.image_editor.processor import add_watermark
+from src.image_editor.processor import create_football_post
 from src.state_manager import get_posts_by_status, update_post_status
-from src.ai_generator import generate_headline
+from src.ai_generator import analyze_and_generate_content
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -22,38 +22,51 @@ def run_agent_2():
         logging.info("No DOWNLOADED posts to edit.")
         return
         
-    for post_id, data in pending_posts.items():
+    for content_id, data in pending_posts.items():
         file_id = data.get("telegram_file_id")
         title = data.get("title", "FIFA Update")
         description = data.get("caption", "")
         msg_id = data.get("telegram_msg_id")
         
         if not file_id:
-            logging.error(f"Missing file_id for post {post_id}")
+            logging.error(f"Missing file_id for post {content_id}")
             continue
             
-        logging.info(f"Processing DOWNLOADED message: {msg_id}")
+        logging.info(f"Processing DOWNLOADED message: {msg_id} (Content ID: {content_id})")
         
-        raw_path = f"output/raw_{msg_id}.jpg"
-        edited_path = f"output/edited_{msg_id}.jpg"
-        
-        internal_post_id = data.get("internal_post_id", "UNKNOWN")
+        raw_path = f"output/{content_id}_raw.jpg"
+        edited_path = f"output/{content_id}_edited.jpg"
         
         try:
             if download_telegram_photo(file_id, raw_path):
-                # Generate AI Headline
-                headline = generate_headline(title, description)
+                # Verify that the correct Content ID file exists
+                if not os.path.exists(raw_path):
+                    raise FileNotFoundError(f"Content ID mismatch: Expected {raw_path} not found.")
+                
+                # Content Analysis and Generation
+                ai_data = analyze_and_generate_content(title, description)
+                headline = ai_data.get("image_headline", title[:50])
+                subheadline = ai_data.get("image_subheadline", description[:100])
+                facebook_post = ai_data.get("facebook_post", f"{title}\n\n{description}")
+                style = ai_data.get("style", "News Style")
+                confidence = ai_data.get("confidence", "50")
+                
+                logging.info(f"Generated Style: {style} (Confidence: {confidence}%)")
                 
                 # Edit Image
-                if add_watermark(raw_path, edited_path, logo_path="assets/logo/logo.png", watermark_text=headline):
+                if create_football_post(raw_path, edited_path, headline=headline, hook_text=subheadline, style=style, logo_path="assets/logo/logo.png"):
                     github_run_id = os.getenv('GITHUB_RUN_ID', 'manual')
                     report = (
                         f"✅ Editing Successfully Completed\n"
-                        f"🎬 Photo Name:\n{title}\n\n"
+                        f"🆔 Content ID: {content_id}\n\n"
+                        f"🎬 Original Title:\n{title}\n\n"
                         f"🛠️ Editing Status: Success\n\n"
-                        f"📝 Applied Edits:\nAI Headline added, Branding Watermark\n\n"
-                        f"Original File: {internal_post_id}.jpg\n\n"
-                        f"🕒 Timestamp:\n{time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
+                        f"Detected Editing Style: {style} (Confidence: {confidence}%)\n\n"
+                        f"📝 Generated Headline:\n{headline}\n\n"
+                        f"📝 Generated Subheadline:\n{subheadline}\n\n"
+                        f"Original File: {content_id}_raw.jpg\n"
+                        f"Edited File: {content_id}_edited.jpg\n\n"
+                        f"🕒 Edit Time:\n{time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}\n\n"
                         f"📦 GitHub Repository:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2\n\n"
                         f"📄 Workflow Run:\nhttps://github.com/Vikram-Bosak/Fifa_world_cup_agent_2/actions/runs/{github_run_id}"
                     )
@@ -67,22 +80,22 @@ def run_agent_2():
                         logging.info(f"Sent EDITED status. New Message ID: {new_msg_id}")
                         
                         update_post_status(
-                            post_id=post_id,
+                            content_id=content_id,
                             status="EDITED",
                             telegram_msg_id=new_msg_id,
                             telegram_file_id=new_file_id,
-                            internal_post_id=internal_post_id
+                            facebook_post=facebook_post
                         )
                     else:
-                        error_msg = f"❌ <b>Error:</b> Failed to send EDITED photo for {post_id}"
+                        error_msg = f"❌ <b>Error:</b> Failed to send EDITED photo for {content_id}"
                         logging.error(error_msg)
                         send_telegram_message(error_msg, reply_to_message_id=msg_id)
                 else:
-                    error_msg = f"❌ <b>Error:</b> Failed to add watermark/edit image for {post_id}"
+                    error_msg = f"❌ <b>Error:</b> Failed to add watermark/edit image for {content_id}"
                     logging.error(error_msg)
                     send_telegram_message(error_msg, reply_to_message_id=msg_id)
             else:
-                error_msg = f"❌ <b>Error:</b> Failed to download photo from Telegram for editing (Post {post_id})"
+                error_msg = f"❌ <b>Error:</b> Failed to download photo from Telegram for editing (Post {content_id})"
                 logging.error(error_msg)
                 send_telegram_message(error_msg, reply_to_message_id=msg_id)
         except Exception as e:

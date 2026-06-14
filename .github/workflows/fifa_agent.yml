@@ -36,6 +36,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TWITTER_SOURCE_PROFILE: ${{ secrets.TWITTER_SOURCE_PROFILE }}
+          TWITTER_USERNAME: ${{ secrets.TWITTER_USERNAME }}
+          TWITTER_EMAIL: ${{ secrets.TWITTER_EMAIL }}
+          TWITTER_PASSWORD: ${{ secrets.TWITTER_PASSWORD }}
         run: python agent_1_download.py
         
       - name: Run Agent 2 (Editor)
@@ -57,5 +60,5 @@ jobs:
       - name: Commit Processed State
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-            commit_message: "chore: update processed pipeline state"
-            file_pattern: "output/*.json"
+            commit_message: "chore: update processed pipeline state and cookies"
+            file_pattern: "output/*.json cookies.json"
