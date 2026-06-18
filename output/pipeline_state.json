@@ -1,14 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065399884895928688#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "30",
-        "telegram_file_id": "AgACAgUAAxkDAAMeaiv3BvNwt0ShnWtnT3z6odDHqBsAAu0Paxv-sWFVoE9ih6Nx6O0BAAMCAAN3AAM8BA",
-        "title": "USA at the #FIFAWorldCup \ud83c\uddfa\ud83c\uddf8\u26bd\ufe0f",
-        "profile": "FIFAWorldCup",
-        "internal_post_id": "FWC_1781266149",
-        "fb_post_id": "1094922960379153_122098160175360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098160175360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065373548101669043#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "31",
@@ -654,7 +644,7 @@
         "public_url": "https://www.facebook.com/1094922960379153/posts/122103070719360902"
     },
     "FIFA-20260618-0005": {
-        "status": "EDITED",
+        "status": "UPLOADED",
         "download_time": "2026-06-18T20:30:34.646149Z",
         "source_url": "https://x.com/WorldCupMedia_/status/2067677555294097484",
         "telegram_msg_id": "215",
@@ -663,6 +653,24 @@
         "profile": "WorldCupMedia_",
         "caption": "\ud83d\udea8 OFFICIAL: Ladislav Krej\u010d\u00ed wins the Superior Player of the Match award in Czechia's clash against South Africa. \ud83c\udfc6\ud83c\udde8\ud83c\uddff https://t.co/DcMMRWGpOx",
         "edit_time": "2026-06-18T20:32:02.426781Z",
-        "facebook_post": "BREAKING: Ladislav Krej\u010d\u00ed just locked down the Superior Player of the Match award as Czechia rolled past South Africa! \ud83c\udfc6\n\nThe Sparta Prague captain controlled the midfield, dictated tempo, and delivered the kind of complete performance that reminds everyone why he's the heartbeat of this national team. From defensive interceptions to driving runs forward \u2014 Krej\u010d\u00ed was everywhere.\n\nWith Euro 2024 qualifiers looming, this is exactly the form Ivan Ha\u0161ek needs from his leader. The Czechs are building momentum at the perfect time.\n\n#FIFAWorldCup #Football #Soccer #Czechia #Krejci #PlayerOfTheMatch #Euro2024 #InternationalFootball"
+        "facebook_post": "BREAKING: Ladislav Krej\u010d\u00ed just locked down the Superior Player of the Match award as Czechia rolled past South Africa! \ud83c\udfc6\n\nThe Sparta Prague captain controlled the midfield, dictated tempo, and delivered the kind of complete performance that reminds everyone why he's the heartbeat of this national team. From defensive interceptions to driving runs forward \u2014 Krej\u010d\u00ed was everywhere.\n\nWith Euro 2024 qualifiers looming, this is exactly the form Ivan Ha\u0161ek needs from his leader. The Czechs are building momentum at the perfect time.\n\n#FIFAWorldCup #Football #Soccer #Czechia #Krejci #PlayerOfTheMatch #Euro2024 #InternationalFootball",
+        "upload_time": "2026-06-18T23:51:15.322608Z",
+        "fb_post_id": "1094922960379153_122103296967360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122103296967360902"
+    },
+    "FIFA-20260618-0006": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-18T23:48:26.999773Z",
+        "source_url": "https://x.com/Waleedahmdd/status/2067728759705198994",
+        "telegram_msg_id": "218",
+        "telegram_file_id": "AgACAgUAAxkDAAPaajSECGCqXiKuMSqfGPpw6Qf02W8AAj8Oaxt_PaFVbYaba5P_eI4BAAMCAAN5AAM8BA",
+        "title": "RT @ESPNFC: JOHAN MANZAMBI WITH A BRACE OFF THE BENCH FOR THE SWISS \ud83d\ude24   The 20-year-old is off and r",
+        "profile": "Waleedahmdd",
+        "caption": "RT @ESPNFC: JOHAN MANZAMBI WITH A BRACE OFF THE BENCH FOR THE SWISS \ud83d\ude24\n \nThe 20-year-old is off and running! https://t.co/DB58GQlgK9",
+        "edit_time": "2026-06-18T23:49:28.875368Z",
+        "facebook_post": "WHAT AN IMPACT! \ud83d\ude24\n\n20-year-old Johan Manzambi comes off the bench and bags a BRACE for Switzerland! The youngster is off and running, announcing himself in style. This is why you never count out the super-subs.\n\nSwiss football's future looks BRIGHT. \ud83c\udde8\ud83c\udded\n\n#FIFAWorldCup #Football #Soccer #Switzerland #Manzambi #RisingStar #SuperSub #InternationalFootball",
+        "upload_time": "2026-06-18T23:54:59.647526Z",
+        "fb_post_id": "1094922960379153_122103298491360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122103298491360902"
     }
 }
