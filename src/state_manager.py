@@ -1,10 +1,10 @@
 import os
 import json
 import logging
-
 import datetime
 
 STATE_FILE = "output/pipeline_state.json"
+MAX_UPLOADED_ENTRIES = 50  # Keep only last 50 uploaded entries to prevent state file bloat
 
 def load_state():
     if not os.path.exists(STATE_FILE):
@@ -23,6 +23,21 @@ def save_state(state):
             json.dump(state, f, indent=4)
     except Exception as e:
         logging.error(f"Failed to save state to {STATE_FILE}: {e}")
+
+def cleanup_old_uploaded(state):
+    """
+    Auto-prune: Keep only the last MAX_UPLOADED_ENTRIES uploaded entries
+    to prevent state file from growing indefinitely.
+    """
+    uploaded = [(k, v) for k, v in state.items() if v.get("status") == "UPLOADED"]
+    if len(uploaded) > MAX_UPLOADED_ENTRIES:
+        # Sort by upload_time ascending and remove oldest
+        uploaded.sort(key=lambda x: x[1].get("upload_time", ""))
+        to_remove = uploaded[:len(uploaded) - MAX_UPLOADED_ENTRIES]
+        for cid, _ in to_remove:
+            del state[cid]
+        logging.info(f"State cleanup: removed {len(to_remove)} old UPLOADED entries.")
+    return state
 
 def generate_content_id():
     state = load_state()
@@ -61,6 +76,8 @@ def update_post_status(content_id, status, **kwargs):
         state[content_id]["edit_time"] = current_time
     elif status == "UPLOADED" and "upload_time" not in state[content_id]:
         state[content_id]["upload_time"] = current_time
+        # Auto cleanup after marking uploaded
+        state = cleanup_old_uploaded(state)
         
     for k, v in kwargs.items():
         state[content_id][k] = v
