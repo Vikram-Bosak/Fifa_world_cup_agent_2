@@ -100,11 +100,11 @@ async def _get_latest_photo_tweet_async(profiles, processed_urls):
             tweets = await user.get_tweets('Tweets', count=10)
             
             for tweet in tweets:
-                # Check age (within last 2 hours)
+                # Check age (within last 3 hours for safe overlap with 2h schedule)
                 try:
                     pub_time = datetime.strptime(tweet.created_at, '%a %b %d %H:%M:%S %z %Y')
                     age_seconds = (datetime.now(timezone.utc) - pub_time).total_seconds()
-                    if age_seconds > 7200:
+                    if age_seconds > 10800:
                         continue
                     found_any_in_2h = True
                 except Exception as e:
@@ -160,13 +160,13 @@ async def _get_latest_photo_tweet_async(profiles, processed_urls):
     if found_duplicate_in_2h:
         return {
             "status": "SKIPPED",
-            "reason": "Content already processed.",
+            "reason": "Content already processed in the last 3 hours.",
             "checked_profiles": profiles
         }
     
     return {
         "status": "SKIPPED",
-        "reason": "No valid image found in the last 2 hours across all configured Twitter profiles.",
+        "reason": "No valid image found in the last 3 hours across all configured Twitter profiles.",
         "checked_profiles": profiles
     }
 

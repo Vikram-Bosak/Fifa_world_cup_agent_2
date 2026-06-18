@@ -73,8 +73,9 @@ def run_agent_3():
                     raise FileNotFoundError(f"Content ID mismatch: Expected {upload_path} not found.")
                 
                 # Apply human-like random delay before uploading
-                # Delay between 2 minutes (120s) and 15 minutes (900s)
-                delay_seconds = random.randint(120, 900)
+                # Delay between 1 minute (60s) and 5 minutes (300s)
+                # Kept short to respect GitHub Actions 25-min timeout
+                delay_seconds = random.randint(60, 300)
                 delay_minutes = delay_seconds // 60
                 logging.info(f"Applying random delay of {delay_minutes} minutes ({delay_seconds} seconds) for human-like behavior...")
                 time.sleep(delay_seconds)

@@ -204,7 +204,9 @@ def create_football_post(image_path, output_path, headline, hook_text, branding=
         pilmoji.text((880, action_y), "🔗 Share", font=footer_font, fill="#FFFFFF")
         
     base_img.paste(content, (10, 10))
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    out_dir = os.path.dirname(output_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     base_img.save(output_path)
     logging.info(f"Image saved to {output_path} with smart crop and 80/20 layout.")
     return True
