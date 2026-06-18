@@ -1,214 +1,213 @@
 import os
 import requests
-from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageOps
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+from pilmoji import Pilmoji
 import logging
+import cv2
+import numpy as np
+import random
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def ensure_font_downloaded(font_url, font_path):
-    os.makedirs(os.path.dirname(font_path), exist_ok=True)
     if not os.path.exists(font_path):
         try:
-            logging.info(f"Downloading font from {font_url}")
             r = requests.get(font_url, timeout=10)
             with open(font_path, 'wb') as f:
                 f.write(r.content)
         except Exception as e:
             logging.error(f"Failed to download font: {e}")
 
-def get_font(size):
-    font_path = "assets/fonts/Roboto-Bold.ttf"
-    font_url = "https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Bold.ttf"
+def get_font(size, bold=False):
+    os.makedirs("assets/fonts", exist_ok=True)
+    if bold:
+        font_path = "assets/fonts/Roboto-Bold.ttf"
+        font_url = "https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Bold.ttf"
+    else:
+        font_path = "assets/fonts/Roboto-Regular.ttf"
+        font_url = "https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf"
+        
     ensure_font_downloaded(font_url, font_path)
     try:
         return ImageFont.truetype(font_path, size)
     except Exception:
         return ImageFont.load_default()
 
-def draw_gradient_overlay(img):
-    overlay = Image.new('RGBA', img.size, (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
-    width, height = img.size
-    gradient_start_y = int(height * 0.3) 
-    
-    for y in range(gradient_start_y, height):
-        opacity = int(255 * ((y - gradient_start_y) / (height - gradient_start_y)))
-        draw.line([(0, y), (width, y)], fill=(0, 0, 0, opacity))
-        
-    img.paste(overlay, (0, 0), overlay)
-
-def create_football_post(image_path, output_path, headline, hook_text, branding="FIFAWorldCup USA", style="Breaking News Style", logo_path=None):
-    try:
-        img = Image.open(image_path)
-    except Exception as e:
-        logging.error(f"Error opening image {image_path}: {e}")
-        return False
-
-    img = img.convert('RGB')
-    
-    # 1080x1350 (4:5) crop and resize
-    width, height = img.size
-    target_ratio = 1080 / 1350.0
-    current_ratio = width / height
-    
-    if current_ratio > target_ratio:
-        # Image is too wide
-        new_width = int(height * target_ratio)
-        left = (width - new_width) / 2
-        right = left + new_width
-        top = 0
-        bottom = height
+def detect_face_and_crop(img, target_w, target_h):
+    """
+    Detects a face in the image and crops it so the face is always in the safe zone.
+    """
+    img_cv = np.array(img)
+    if len(img_cv.shape) == 3 and img_cv.shape[2] == 3:
+        gray = cv2.cvtColor(img_cv, cv2.COLOR_RGB2GRAY)
     else:
-        # Image is too tall
-        new_height = int(width / target_ratio)
-        top = (height - new_height) / 2
-        bottom = top + new_height
-        left = 0
-        right = width
+        gray = img_cv
         
-    img = img.crop((left, top, right, bottom))
-    img = img.resize((1080, 1350), Image.Resampling.LANCZOS)
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4, minSize=(30, 30))
     
-    # Emotional/Sad Style: Desaturate the image
-    if style in ["Emotional Style", "Sad Style"]:
-        enhancer = ImageEnhance.Color(img)
-        img = enhancer.enhance(0.4)
-        enhancer_brightness = ImageEnhance.Brightness(img)
-        img = enhancer_brightness.enhance(0.8)
-
-    draw = ImageDraw.Draw(img)
+    img_w, img_h = img.size
+    if len(faces) > 0:
+        # Get largest face
+        (x, y, w, h) = sorted(faces, key=lambda f: f[2]*f[3], reverse=True)[0]
+        face_center_x = x + w // 2
+        face_center_y = y + h // 2
+        logging.info("Face detected! Using smart crop.")
+    else:
+        face_center_x = img_w // 2
+        face_center_y = img_h // 2
+        logging.info("No face detected. Using center crop.")
+        
+    # Resize image so the smallest dimension matches the target
+    ratio = max(target_w / img_w, target_h / img_h)
+    new_w = int(img_w * ratio)
+    new_h = int(img_h * ratio)
+    img_resized = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
     
-    main_font = get_font(56)
-    hook_font = get_font(40)
-    brand_font = get_font(30)
+    # Map face center to new dimensions
+    new_face_center_x = int(face_center_x * ratio)
+    new_face_center_y = int(face_center_y * ratio)
     
-    from pilmoji import Pilmoji
-    def get_lines(text, font, max_w):
-        with Pilmoji(img) as pilmoji:
-            words = text.split()
-            lines, current_line = [], []
-            for word in words:
-                test_line = current_line + [word]
-                clean_text = " ".join(test_line).replace('*', '')
-                line_width, _ = pilmoji.getsize(clean_text, font=font)
-                if line_width <= max_w:
-                    current_line.append(word)
-                else:
-                    if current_line: lines.append(current_line)
-                    current_line = [word]
-            if current_line: lines.append(current_line)
-            return lines
+    # Calculate crop box
+    left = max(0, new_face_center_x - target_w // 2)
+    if left + target_w > new_w: left = new_w - target_w
+    
+    # Vertically position face slightly above center for good composition
+    top = max(0, new_face_center_y - int(target_h * 0.4))
+    if top + target_h > new_h: top = new_h - target_h
+    
+    return img_resized.crop((left, top, left + target_w, top + target_h))
 
-    def draw_text_with_outline(lines, font, y_pos, line_height, text_color, outline_color, stroke_width=3, center=True, is_impact=False):
-        with Pilmoji(img) as pilmoji:
-            for line_words in lines:
-                clean_line = " ".join(line_words).replace('*', '')
-                line_width, _ = pilmoji.getsize(clean_line, font=font)
-                x = (1080 - line_width) / 2 if center else 60
-                
-                is_highlight = False
-                for i, word in enumerate(line_words):
-                    if word.startswith('*'):
-                        is_highlight = True
-                        word = word[1:]
-                    end_highlight = False
-                    if word.endswith('*'):
-                        end_highlight = True
-                        word = word[:-1]
-                        
-                    current_color = "#FFD700" if is_highlight and not is_impact else text_color
-                    if is_impact:
-                        current_color = "#FFD700"
-                        outline_color = "#000000"
-                    
-                    # Draw Outline
-                    if outline_color:
-                        pilmoji.text((x-stroke_width, y_pos-stroke_width), word, font=font, fill=outline_color)
-                        pilmoji.text((x+stroke_width, y_pos-stroke_width), word, font=font, fill=outline_color)
-                        pilmoji.text((x-stroke_width, y_pos+stroke_width), word, font=font, fill=outline_color)
-                        pilmoji.text((x+stroke_width, y_pos+stroke_width), word, font=font, fill=outline_color)
-                    
-                    pilmoji.text((x, y_pos), word, font=font, fill=current_color)
-                    
-                    word_width, _ = pilmoji.getsize(word, font=font)
-                    x += word_width
-                    if end_highlight: is_highlight = False
-                    if i < len(line_words) - 1:
-                        space_width, _ = pilmoji.getsize(" ", font=font)
-                        x += space_width
-                y_pos += line_height
-            return y_pos
+def create_football_post(image_path, output_path, headline, hook_text, branding="FIFA Insider USA", style="News Style", logo_path=None):
+    words = hook_text.split()
+    desc_words = []
+    hashtags = []
+    for w in words:
+        if w.startswith('#'):
+            hashtags.append(w)
+        else:
+            desc_words.append(w)
+            
+    description = " ".join(desc_words)
+    hashtag_str = " ".join(hashtags)
+    if not hashtag_str:
+        hashtag_str = "#FIFAWorldCup #Football #Soccer"
 
-    # Shorten the hook text if it's too long
-    if len(hook_text) > 150:
-        hook_text = hook_text[:147] + "..."
+    random_likes = random.randint(5420, 29850)
+    likes = f"{random_likes:,}"
 
-    # Apply Style Logic
-    if style in ["Meme Style", "Comparison Style"]:
-        headline_lines = get_lines(headline, main_font, 960)
-        hook_lines = get_lines(hook_text, hook_font, 960)
-        
-        # Impact Meme Style Layout
-        draw_text_with_outline(headline_lines, main_font, 80, 60, "#FFD700", "#000000", stroke_width=4, is_impact=True)
-        draw_text_with_outline(hook_lines, hook_font, 1350 - 150 - (len(hook_lines) * 45), 45, "#FFFFFF", "#000000", stroke_width=3)
-        
-    elif style in ["Emotional Style", "Sad Style", "Storytelling Style"]:
-        # Heavy Bottom Gradient
-        draw_gradient_overlay(img)
-        headline_lines = get_lines(headline, main_font, 960)
-        hook_lines = get_lines(hook_text, hook_font, 960)
-        
-        total_h = (len(headline_lines) * 60) + (len(hook_lines) * 45) + 40
-        start_y = 1350 - 150 - total_h
-        
-        start_y = draw_text_with_outline(headline_lines, main_font, start_y, 60, "#FFFFFF", None, center=False)
-        start_y += 20
-        draw_text_with_outline(hook_lines, hook_font, start_y, 45, "#CCCCCC", None, center=False)
-        
-    else: # Breaking News Style (Default)
-        headline_lines = get_lines(headline, main_font, 960)
-        headline_h = len(headline_lines) * 60 + 60
-        
-        # Top Yellow Banner
-        draw.rectangle([0, 0, 1080, headline_h], fill="#FFD700")
-        draw_text_with_outline(headline_lines, main_font, 30, 60, "#000000", None)
-        
-        hook_lines = get_lines(hook_text, hook_font, 960)
-        hook_h = len(hook_lines) * 45 + 60
-        
-        # Bottom Black Banner
-        draw.rectangle([0, 1350 - hook_h - 100, 1080, 1350], fill="#000000")
-        draw_text_with_outline(hook_lines, hook_font, 1350 - hook_h - 70, 45, "#FFFFFF", None)
+    # Strict 80/20 Layout
+    # Content: 1060x1420
+    # Header: 110px
+    # Footer: 140px
+    # Remaining: 1170px
+    # Image: 936px (80%)
+    # Text: 234px (20%)
 
-    # Branding Logo (Top Right Corner with Opacity)
-    try:
+    base_img = Image.new('RGB', (1080, 1440), color="#C6A664")
+    content = Image.new('RGB', (1060, 1420), color="#000000") # Black background for text area
+    draw = ImageDraw.Draw(content)
+    
+    header_font = get_font(55, bold=True)
+    credit_font = get_font(30, bold=True)
+    title_font = get_font(35, bold=True)
+    desc_font = get_font(26, bold=True) # Bold description
+    small_font = get_font(18, bold=False)
+    footer_font = get_font(30, bold=True)
+    
+    with Pilmoji(content) as pilmoji:
+        # 1. Top Header
+        draw.rectangle([0, 0, 1060, 110], fill="#1E243A")
+        
+        text_x_pos = 30
         if logo_path and os.path.exists(logo_path):
-            logo = Image.open(logo_path).convert("RGBA")
-            # Auto-scale: ~12% of image width
-            target_w = int(1080 * 0.12)
-            logo.thumbnail((target_w, target_w), Image.Resampling.LANCZOS)
+            try:
+                logo = Image.open(logo_path).convert("RGBA")
+                lw, lh = logo.size
+                n_h = 80
+                n_w = int(lw * (n_h/lh))
+                logo = logo.resize((n_w, n_h), Image.Resampling.LANCZOS)
+                content.paste(logo, (20, 15), logo)
+                text_x_pos = 20 + n_w + 20
+            except Exception as e:
+                logging.error(f"Failed to load logo: {e}")
+
+        header_text = f"{branding}"
+        pilmoji.text((text_x_pos, 25), header_text, font=header_font, fill="#FFFFFF")
+
+        # 2. Main Image (Height 936)
+        try:
+            if image_path.startswith("http"):
+                headers = {'User-Agent': 'Mozilla/5.0'}
+                r = requests.get(image_path, headers=headers, timeout=10)
+                r.raise_for_status()
+                main_img = Image.open(BytesIO(r.content)).convert('RGB')
+            else:
+                main_img = Image.open(image_path).convert('RGB')
+        except Exception as e:
+            logging.error(f"Error downloading image, using placeholder: {e}")
+            main_img = Image.new('RGB', (1060, 936), color="#222222")
             
-            # Opacity ~90%
-            alpha = logo.split()[3]
-            alpha = ImageEnhance.Brightness(alpha).enhance(0.9)
-            logo.putalpha(alpha)
-            
-            # Top Right Position with safe margin
-            margin_x = 40
-            margin_y = 40
-            
-            x_pos = 1080 - logo.width - margin_x
-            y_pos = margin_y
-            
-            img.paste(logo, (x_pos, y_pos), logo)
-            
-        # Draw branding text at bottom left
-        draw.text((40, 1350 - 60), branding, font=brand_font, fill=(200, 200, 200))
-    except Exception as e:
-        logging.error(f"Error placing logo: {e}")
-        draw.text((40, 1350 - 60), branding, font=brand_font, fill=(200, 200, 200))
+        # Smart crop using Face Detection
+        main_img = detect_face_and_crop(main_img, 1060, 936)
+        content.paste(main_img, (0, 110))
         
+        # Video Credit
+        credit_text = "Video Credit: Twitter (x) videos"
+        c_bbox = draw.textbbox((0,0), credit_text, font=credit_font)
+        c_w = c_bbox[2] - c_bbox[0]
+        draw.text((1060 - c_w - 20 + 2, 110 + 936 - 45 + 2), credit_text, font=credit_font, fill="#000000") # Shadow
+        draw.text((1060 - c_w - 20, 110 + 936 - 45), credit_text, font=credit_font, fill="#E0E0E0")
+        
+        # 3. Text Area (20% -> 234px)
+        text_y = 1065
+        
+        # Title
+        pilmoji.text((30, text_y), headline.upper(), font=title_font, fill="#FFFF00") # Yellow text
+        text_y += 50
+        
+        # Description
+        lines = []
+        current_line = []
+        for word in description.split():
+            current_line.append(word)
+            bbox = draw.textbbox((0,0), " ".join(current_line), font=desc_font)
+            if bbox[2] - bbox[0] > 1000:
+                current_line.pop()
+                lines.append(" ".join(current_line))
+                current_line = [word]
+        if current_line:
+            lines.append(" ".join(current_line))
+        
+        for line in lines[:2]: # Max 2 lines to fit safely
+            pilmoji.text((30, text_y), line, font=desc_font, fill="#FFFF00") # Yellow text
+            text_y += 35
+            
+        text_y += 15
+        # Hashtags
+        pilmoji.text((30, text_y), hashtag_str, font=desc_font, fill="#FFFF00") # Yellow text
+        
+        # 4. Footer section (1280 to 1420)
+        footer_y = 1280
+        draw.rectangle([0, footer_y, 1060, 1420], fill="#334168")
+        draw.line([(0, footer_y), (1060, footer_y)], fill="#506080", width=2)
+        
+        tiny_text = "Tap or hold to like and react with Love, Haha, Wow, or Sad!"
+        t_bbox = draw.textbbox((0,0), tiny_text, font=small_font)
+        draw.text(((1060 - (t_bbox[2]-t_bbox[0]))/2, footer_y + 10), tiny_text, font=small_font, fill="#A0A0A0")
+        
+        action_y = 1345
+        pilmoji.text((30, action_y), f"👍 ❤️ {likes} Likes", font=footer_font, fill="#FFFFFF")
+        pilmoji.text((450, action_y), "😂 😲 😢", font=footer_font, fill="#FFFFFF")
+        pilmoji.text((650, action_y), "💬 Comment", font=footer_font, fill="#FFFFFF")
+        pilmoji.text((880, action_y), "🔗 Share", font=footer_font, fill="#FFFFFF")
+        
+    base_img.paste(content, (10, 10))
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    img.save(output_path, "JPEG", quality=95)
-    logging.info(f"Image saved to {output_path} with style: {style}")
+    base_img.save(output_path)
+    logging.info(f"Image saved to {output_path} with smart crop and 80/20 layout.")
     return True
+
+if __name__ == "__main__":
+    logging.info("Image processor module loaded. Use create_football_post() to generate posters.")

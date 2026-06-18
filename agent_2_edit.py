@@ -54,7 +54,7 @@ def run_agent_2():
                 logging.info(f"Generated Style: {style} (Confidence: {confidence}%)")
                 
                 # Edit Image
-                if create_football_post(raw_path, edited_path, headline=headline, hook_text=subheadline, style=style, logo_path="assets/logo/logo.png"):
+                if create_football_post(raw_path, edited_path, headline=headline, hook_text=subheadline, branding="FIFA Insider USA", style=style, logo_path="assets/logo/logo.png"):
                     github_run_id = os.getenv('GITHUB_RUN_ID', 'manual')
                     report = (
                         f"✅ Editing Successfully Completed\n"

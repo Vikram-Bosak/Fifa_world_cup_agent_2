@@ -48,7 +48,7 @@ def analyze_and_generate_content(title, description, context=""):
         "Generate a structured JSON response with exactly these 5 keys:\n"
         "1. \"image_headline\": A short, punchy, viral headline (max 7 words) to go on top of the image. NO EMOJIS here.\n"
         "2. \"image_subheadline\": A catchy subheadline to go at the bottom of the image. MUST INCLUDE 1-2 highly relevant emojis matching the topic (e.g. ⚽, 🏆, 🇺🇸, 🏴󠁧󠁢󠁳󠁣󠁴󠁿, 🔴). Do not just copy the original text.\n"
-        "3. \"facebook_post\": A highly engaging, SEO-optimized Facebook post caption in strict American English (e.g. 'Soccer'). Include a hook, summary, and US-centric hashtags.\n"
+        "3. \"facebook_post\": A highly engaging, SEO-optimized Facebook post caption in strict American English (e.g. 'Soccer'). Include a hook, summary, and specific FIFA World Cup hashtags like #FIFAWorldCup #Football #Soccer.\n"
         "4. \"style\": Select ONE visual style that best fits from: Story Style, Meme Style, Cinematic Style, Documentary Style, News Style, Motivational Style, Funny Style, Mixed Style, Other.\n"
         "5. \"confidence\": A score from 0 to 100 on how sure you are about the style classification.\n\n"
         "OUTPUT FORMAT MUST BE STRICTLY VALID JSON. DO NOT INCLUDE ANY MARKDOWN formatting like ```json ... ```. Just raw JSON.\n"
