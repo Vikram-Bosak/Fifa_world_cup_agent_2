@@ -2,8 +2,8 @@ name: FIFA Insider USA — Autonomous Pipeline
 
 on:
   schedule:
-    # Runs every 1 hour for maximum content freshness
-    - cron: '0 * * * *'
+    # Runs every 2 hours
+    - cron: '0 */2 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 env:
