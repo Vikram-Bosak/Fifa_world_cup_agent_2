@@ -30,3 +30,5 @@ twikit==2.1.2
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.7.0
+opencv-python-headless==4.9.0.80
+numpy==1.26.4
