@@ -1,24 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065373548101669043#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "31",
-        "telegram_file_id": "AgACAgUAAxkDAAMfaiv3OG_QXygOGTH2g6IKdDEyUhsAAu4Paxv-sWFVM1D1D3kJXSoBAAMCAAN3AAM8BA",
-        "title": "Ready for day 2\ufe0f\u20e3\n\n#FIFAWorldCup",
-        "profile": "FIFAWorldCup",
-        "internal_post_id": "FWC_1781266199",
-        "fb_post_id": "1094922960379153_122098160271360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098160271360902"
-    },
-    "https://nitter.net/FIFAWorldCup/status/2065403742917108210#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "32",
-        "telegram_file_id": "AgACAgUAAxkDAAMgaiv3TD26IOKjRZEc0eEGzQWrKMUAAu8Paxv-sWFVwvvmm766mwYBAAMCAAN3AAM8BA",
-        "title": "Coming up on day two \ud83d\udd1c\n\n#FIFAWorldCup",
-        "profile": "FIFAWorldCup",
-        "internal_post_id": "FWC_1781266249",
-        "fb_post_id": "1094922960379153_122098160763360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098160763360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065405708095377631#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "37",
@@ -674,7 +654,7 @@
         "public_url": "https://www.facebook.com/1094922960379153/posts/122103298491360902"
     },
     "FIFA-20260619-0001": {
-        "status": "EDITED",
+        "status": "UPLOADED",
         "download_time": "2026-06-19T04:49:58.065420Z",
         "source_url": "https://x.com/WorldCupMedia_/status/2067831254586896651",
         "telegram_msg_id": "222",
@@ -683,6 +663,24 @@
         "profile": "WorldCupMedia_",
         "caption": "MEXICO \ud83c\uddf2\ud83c\uddfd\ud83e\udd86 https://t.co/R0t2EeRKoC",
         "edit_time": "2026-06-19T04:51:36.236000Z",
-        "facebook_post": "\u26bd Update \ud83c\udfc6\n\nMEXICO \ud83c\uddf2\ud83c\uddfd\ud83e\udd86 https://t.co/R0t2EeRKoC\n\nMEXICO \ud83c\uddf2\ud83c\uddfd\ud83e\udd86 https://t.co/R0t2EeRKoC\n\n#FIFAWorldCup"
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\nMEXICO \ud83c\uddf2\ud83c\uddfd\ud83e\udd86 https://t.co/R0t2EeRKoC\n\nMEXICO \ud83c\uddf2\ud83c\uddfd\ud83e\udd86 https://t.co/R0t2EeRKoC\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-19T10:47:13.560011Z",
+        "fb_post_id": "1094922960379153_122103657939360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122103657939360902"
+    },
+    "FIFA-20260619-0002": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-19T10:44:15.475670Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2067909903826788817",
+        "telegram_msg_id": "225",
+        "telegram_file_id": "AgACAgUAAxkDAAPhajUd53ZF11UB6zjcwjDfWrARu1gAAl4Oaxt_PalVgO3DhASXJbMBAAMCAAN5AAM8BA",
+        "title": "\u00a1Atajad\u00f3n! \ud83c\uddf2\ud83c\uddfd \u2665\ufe0f https://t.co/GtbHnWk9QJ",
+        "profile": "WorldCupMedia_",
+        "caption": "\u00a1Atajad\u00f3n! \ud83c\uddf2\ud83c\uddfd \u2665\ufe0f https://t.co/GtbHnWk9QJ",
+        "edit_time": "2026-06-19T10:45:59.611013Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\u00a1Atajad\u00f3n! \ud83c\uddf2\ud83c\uddfd \u2665\ufe0f https://t.co/GtbHnWk9QJ\n\n\u00a1Atajad\u00f3n! \ud83c\uddf2\ud83c\uddfd \u2665\ufe0f https://t.co/GtbHnWk9QJ\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-19T10:49:10.895133Z",
+        "fb_post_id": "1094922960379153_122103659829360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122103659829360902"
     }
 }
