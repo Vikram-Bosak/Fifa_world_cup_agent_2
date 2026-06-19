@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065463889077182951#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "47",
-        "telegram_file_id": "AgACAgUAAxkDAAMvaixIxeOLVFipD-nf-ftHl6u5Qv4AAkURaxv-sWFVHIGEKrA3g7UBAAMCAAN3AAM8BA",
-        "title": "Throwing it back to 1994 \u23ea\n\n#FIFAWorldCup",
-        "profile": "FIFAWorldCup",
-        "caption": "Throwing it back to 1994 \u23ea #FIFAWorldCup",
-        "internal_post_id": "FWC_1781287092",
-        "fb_post_id": "1094922960379153_122098373769360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098373769360902"
-    },
     "https://nitter.net/FIFAWC26Updates/status/2065523345328873791#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "50",
@@ -694,5 +683,20 @@
         "upload_time": "2026-06-19T21:18:52.530303Z",
         "fb_post_id": "1094922960379153_122104075557360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122104075557360902"
+    },
+    "FIFA-20260619-0006": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-19T23:02:10.390201Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068106596350304623",
+        "telegram_msg_id": "238",
+        "telegram_file_id": "AgACAgUAAxkDAAPuajXK06dBqPxGZtje9AUxdpcdDLgAAiIPaxvgNrFVEMeH6YtfvbEBAAMCAAN5AAM8BA",
+        "title": "\ud83d\udea8 BREAKING: Trinity Rodman bringing out the match ball ahead of USA vs Australia. \ud83c\uddfa\ud83c\uddf8 \ud83c\udde6\ud83c\uddfa https://t.co",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 BREAKING: Trinity Rodman bringing out the match ball ahead of USA vs Australia. \ud83c\uddfa\ud83c\uddf8 \ud83c\udde6\ud83c\uddfa https://t.co/uqDDEppkOK",
+        "edit_time": "2026-06-19T23:03:47.644077Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 BREAKING: Trinity Rodman bringing out the match ball ahead of USA vs Australia. \ud83c\uddfa\ud83c\uddf8 \ud83c\udde6\ud83c\uddfa https://t.co\n\n\ud83d\udea8 BREAKING: Trinity Rodman bringing out the match ball ahead of USA vs Australia. \ud83c\uddfa\ud83c\uddf8 \ud83c\udde6\ud83c\uddfa https://t.co/uqDDEppkOK\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-19T23:06:21.280039Z",
+        "fb_post_id": "1094922960379153_122104142529360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122104142529360902"
     }
 }
