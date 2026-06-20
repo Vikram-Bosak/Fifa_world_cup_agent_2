@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065559172041576768#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "53",
-        "telegram_file_id": "AgACAgUAAxkDAAM1aiyROJ0V9ZN6jt7kWw2KGxeXEzsAAnkRaxv-sWFVzrnI0GB7NlIBAAMCAAN3AAM8BA",
-        "title": "You voted Isma\u00ebl Kon\u00e9 Superior Player of the Match! \ud83d\udc51\n\n #FIFAWorldCup #SuperiorPOTM",
-        "profile": "FIFAWorldCup",
-        "caption": "You voted Isma\u00ebl Kon\u00e9 Superior Player of the Match! \ud83d\udc51 #FIFAWorldCup #SuperiorPOTM",
-        "internal_post_id": "FWC_1781305645",
-        "fb_post_id": "1094922960379153_122098530471360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098530471360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065613885000843546#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "56",
@@ -714,5 +703,20 @@
         "caption": "This is Brazil https://t.co/BjFHHaaHYM",
         "edit_time": "2026-06-20T12:00:44.612190Z",
         "facebook_post": "What makes Brazil the heartbeat of world football? \ud83c\udde7\ud83c\uddf7\n\nFrom Pel\u00e9 to Neymar, the yellow jersey carries five stars and a legacy of jogo bonito that no nation can match. This isn't just soccer \u2014 it's art, rhythm, and pure passion woven into every touch.\n\nFive World Cups. Countless legends. One beautiful game.\n\n#FIFAWorldCup #Football #Soccer #Brazil #Selecao #JogoBonito #WorldCupHistory #Pele #Neymar #FootballCulture"
+    },
+    "FIFA-20260620-0003": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-20T14:26:27.935832Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068319657011126555",
+        "telegram_msg_id": "248",
+        "telegram_file_id": "AgACAgUAAxkDAAP4ajajeNe1x2hZyAjhdp4dRqpeMVAAAmIQaxvgNrlVKoILMgTyRIIBAAMCAAN5AAM8BA",
+        "title": "\ud83d\udea8 Cole Palmer enjoying his summer break! \ud83d\udd25 https://t.co/PklsGPdMMo",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 Cole Palmer enjoying his summer break! \ud83d\udd25 https://t.co/PklsGPdMMo",
+        "edit_time": "2026-06-20T14:28:08.799053Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 Cole Palmer enjoying his summer break! \ud83d\udd25 https://t.co/PklsGPdMMo\n\n\ud83d\udea8 Cole Palmer enjoying his summer break! \ud83d\udd25 https://t.co/PklsGPdMMo\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-20T14:35:21.954322Z",
+        "fb_post_id": "1094922960379153_122104844487360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122104844487360902"
     }
 }
