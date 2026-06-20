@@ -1,26 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065613885000843546#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "56",
-        "telegram_file_id": "AgACAgUAAxkDAAM4aiy7cCBCb_2vSjZPUY2XMkbzxswAAqMPaxv-sWlVreggeYJ2OdgBAAMCAAN3AAM8BA",
-        "title": "Kicking off in style \u2728\n\n#FIFAWorldCup",
-        "profile": "FIFAWorldCup",
-        "caption": "Kicking off in style \u2728 #FIFAWorldCup",
-        "internal_post_id": "FWC_1781316364",
-        "fb_post_id": "1094922960379153_122098592343360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098592343360902"
-    },
-    "https://nitter.net/FIFAWC26Updates/status/2065682473183539368#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "59",
-        "telegram_file_id": "AgACAgUAAxkDAAM7ai0JhCeka1Zozn-T97_E8EDEBeIAAkQQaxv-sWlVjLKfWyViBYgBAAMCAAN3AAM8BA",
-        "title": "Group B = Wide Open \nGroup D = USA on top \ud83c\uddfa\ud83c\uddf8\nYour prediction for the final standings?",
-        "profile": "FIFAWC26Updates",
-        "caption": "Group B = Wide Open Group D = USA on top \ud83c\uddfa\ud83c\uddf8 Your prediction for the final standings?",
-        "internal_post_id": "FWC_1781336353",
-        "fb_post_id": "1094922960379153_122098738761360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122098738761360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065735938203083247#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "62",
@@ -693,7 +671,7 @@
         "public_url": "https://www.facebook.com/1094922960379153/posts/122104402257360902"
     },
     "FIFA-20260620-0002": {
-        "status": "EDITED",
+        "status": "UPLOADED",
         "download_time": "2026-06-20T12:00:10.183590Z",
         "source_url": "https://x.com/ofootball__/status/2068299935574094260",
         "telegram_msg_id": "245",
@@ -702,7 +680,10 @@
         "profile": "ofootball__",
         "caption": "This is Brazil https://t.co/BjFHHaaHYM",
         "edit_time": "2026-06-20T12:00:44.612190Z",
-        "facebook_post": "What makes Brazil the heartbeat of world football? \ud83c\udde7\ud83c\uddf7\n\nFrom Pel\u00e9 to Neymar, the yellow jersey carries five stars and a legacy of jogo bonito that no nation can match. This isn't just soccer \u2014 it's art, rhythm, and pure passion woven into every touch.\n\nFive World Cups. Countless legends. One beautiful game.\n\n#FIFAWorldCup #Football #Soccer #Brazil #Selecao #JogoBonito #WorldCupHistory #Pele #Neymar #FootballCulture"
+        "facebook_post": "What makes Brazil the heartbeat of world football? \ud83c\udde7\ud83c\uddf7\n\nFrom Pel\u00e9 to Neymar, the yellow jersey carries five stars and a legacy of jogo bonito that no nation can match. This isn't just soccer \u2014 it's art, rhythm, and pure passion woven into every touch.\n\nFive World Cups. Countless legends. One beautiful game.\n\n#FIFAWorldCup #Football #Soccer #Brazil #Selecao #JogoBonito #WorldCupHistory #Pele #Neymar #FootballCulture",
+        "upload_time": "2026-06-20T17:42:34.371322Z",
+        "fb_post_id": "1094922960379153_122104970583360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122104970583360902"
     },
     "FIFA-20260620-0003": {
         "status": "UPLOADED",
@@ -718,5 +699,20 @@
         "upload_time": "2026-06-20T14:35:21.954322Z",
         "fb_post_id": "1094922960379153_122104844487360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122104844487360902"
+    },
+    "FIFA-20260620-0004": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-20T17:38:49.458542Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068384934566535507",
+        "telegram_msg_id": "252",
+        "telegram_file_id": "AgACAgUAAxkDAAP8ajbQitCjhWOyJ-mYcMNomWJquRYAAoAQaxvgNrlVqop1OdPu58oBAAMCAAN5AAM8BA",
+        "title": "Brian Brobbey \ud83c\uddf3\ud83c\uddf1 \ud83d\udd25 https://t.co/Ojrl3SNmus",
+        "profile": "WorldCupMedia_",
+        "caption": "Brian Brobbey \ud83c\uddf3\ud83c\uddf1 \ud83d\udd25 https://t.co/Ojrl3SNmus",
+        "edit_time": "2026-06-20T17:40:27.035547Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\nBrian Brobbey \ud83c\uddf3\ud83c\uddf1 \ud83d\udd25 https://t.co/Ojrl3SNmus\n\nBrian Brobbey \ud83c\uddf3\ud83c\uddf1 \ud83d\udd25 https://t.co/Ojrl3SNmus\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-20T17:46:20.227295Z",
+        "fb_post_id": "1094922960379153_122104973847360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122104973847360902"
     }
 }
