@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065925480973226370#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "81",
-        "telegram_file_id": "AgACAgUAAxkDAANRai3fkQMaOWAa4bdM1aQKymx85kIAApgPaxtfwHFVcziNZ04xFVkBAAMCAAN3AAM8BA",
-        "title": "Saibari. \ud83e\udee1\ud83c\uddf2\ud83c\udde6\n\n#FIFAWorldCup",
-        "profile": "FIFAWorldCup",
-        "caption": "Saibari. \ud83e\udee1\ud83c\uddf2\ud83c\udde6 #FIFAWorldCup",
-        "internal_post_id": "FWC_1781391226",
-        "fb_post_id": "1094922960379153_122099202435360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122099202435360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065979837106340289#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "85",
@@ -738,5 +727,20 @@
         "upload_time": "2026-06-21T12:20:06.439585Z",
         "fb_post_id": "1094922960379153_122105656245360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122105656245360902"
+    },
+    "FIFA-20260621-0004": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-21T15:56:42.571201Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068696378684153907",
+        "telegram_msg_id": "275",
+        "telegram_file_id": "AgACAgUAAxkDAAIBE2o4ChuEzW3Ugc2LLI6RrG6E3z_2AAI_EWsbAezBVathPJJSfnLpAQADAgADeQADPAQ",
+        "title": "Kylian Mbappe \ud83c\uddeb\ud83c\uddf7 \ud83d\udc10 https://t.co/iUdbzznhlc",
+        "profile": "WorldCupMedia_",
+        "caption": "Kylian Mbappe \ud83c\uddeb\ud83c\uddf7 \ud83d\udc10 https://t.co/iUdbzznhlc",
+        "edit_time": "2026-06-21T15:58:20.246699Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\nKylian Mbappe \ud83c\uddeb\ud83c\uddf7 \ud83d\udc10 https://t.co/iUdbzznhlc\n\nKylian Mbappe \ud83c\uddeb\ud83c\uddf7 \ud83d\udc10 https://t.co/iUdbzznhlc\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-21T16:03:17.907448Z",
+        "fb_post_id": "1094922960379153_122105829993360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122105829993360902"
     }
 }
