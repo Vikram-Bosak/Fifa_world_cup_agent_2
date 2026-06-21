@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065979837106340289#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "85",
-        "telegram_file_id": "AgACAgUAAxkDAANVai4PKup3sueCJyvkMQtnMkvki1IAArQPaxtfwHFV34NysN64CFQBAAMCAAN3AAM8BA",
-        "title": "Who gets your vote for the @MichelobUltra Superior Player Of The Match? \ud83d\udc51\n\n#FIFAWorldCup #SuperiorPOTM",
-        "profile": "FIFAWorldCup",
-        "caption": "Who gets your vote for the @MichelobUltra Superior Player Of The Match? \ud83d\udc51 #FIFAWorldCup #SuperiorPOTM",
-        "internal_post_id": "FWC_1781403424",
-        "fb_post_id": "1094922960379153_122099264133360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122099264133360902"
-    },
     "FIFA-20260614-0001": {
         "status": "UPLOADED",
         "telegram_msg_id": "110",
@@ -742,5 +731,20 @@
         "upload_time": "2026-06-21T16:03:17.907448Z",
         "fb_post_id": "1094922960379153_122105829993360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122105829993360902"
+    },
+    "FIFA-20260621-0005": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-21T17:45:48.559972Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068747727778009461",
+        "telegram_msg_id": "278",
+        "telegram_file_id": "AgACAgUAAxkDAAIBFmo4I62TZx1woAiDUr_qjBGAYKZoAAJFEGsbAezJVUWk6sgomyJ4AQADAgADeQADPAQ",
+        "title": "\ud83d\udea8 OWN GOAL! \ud83c\uddea\ud83c\uddf8  Hassan Altambakti turns the ball into his own net, and Spain's lead grows to 4-0 ove",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 OWN GOAL! \ud83c\uddea\ud83c\uddf8\n\nHassan Altambakti turns the ball into his own net, and Spain's lead grows to 4-0 over Saudi Arabia. \ud83c\uddf8\ud83c\udde6 https://t.co/xCWboRiaSI",
+        "edit_time": "2026-06-21T17:47:25.321640Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 OWN GOAL! \ud83c\uddea\ud83c\uddf8  Hassan Altambakti turns the ball into his own net, and Spain's lead grows to 4-0 ove\n\n\ud83d\udea8 OWN GOAL! \ud83c\uddea\ud83c\uddf8\n\nHassan Altambakti turns the ball into his own net, and Spain's lead grows to 4-0 over Saudi Arabia. \ud83c\uddf8\ud83c\udde6 https://t.co/xCWboRiaSI\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-21T17:51:46.938204Z",
+        "fb_post_id": "1094922960379153_122105897907360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122105897907360902"
     }
 }
