@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065890701133635693#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "78",
-        "telegram_file_id": "AgACAgUAAxkDAANOai3FWCLKahrK_NfGWMkregRWJyIAAlcTaxtfwGlVwpcZCn8s1KEBAAMCAAN3AAM8BA",
-        "title": "It\u2019s time to vote \ufe0ffor your @MichelobUltra Superior Player Of The Match! \ud83d\udc51\n\n#FIFAWorldCup #SuperiorPOTM",
-        "profile": "FIFAWorldCup",
-        "caption": "It\u2019s time to vote \ufe0ffor your @MichelobUltra Superior Player Of The Match! \ud83d\udc51 #FIFAWorldCup #SuperiorPOTM",
-        "internal_post_id": "FWC_1781384523",
-        "fb_post_id": "1094922960379153_122099198907360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122099198907360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065925480973226370#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "81",
@@ -734,5 +723,20 @@
         "upload_time": "2026-06-21T09:59:17.423119Z",
         "fb_post_id": "1094922960379153_122105558553360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122105558553360902"
+    },
+    "FIFA-20260621-0003": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-21T12:14:36.078475Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068666229037088803",
+        "telegram_msg_id": "272",
+        "telegram_file_id": "AgACAgUAAxkDAAIBEGo31gunb80R3Ho5WhDuQL8vIeagAALOEGsbAezBVTviisno74xsAQADAgADeQADPAQ",
+        "title": "\ud83d\udea8 Diogo Dalot via Instagram story:   \"This new generation always on the phone \ud83d\udcf1\u274c\ufe0f\ud83e\udd23 CRISTIANO\" https:",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 Diogo Dalot via Instagram story: \n\n\"This new generation always on the phone \ud83d\udcf1\u274c\ufe0f\ud83e\udd23 CRISTIANO\" https://t.co/GNg2uPbtuc",
+        "edit_time": "2026-06-21T12:16:12.223728Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 Diogo Dalot via Instagram story:   \"This new generation always on the phone \ud83d\udcf1\u274c\ufe0f\ud83e\udd23 CRISTIANO\" https:\n\n\ud83d\udea8 Diogo Dalot via Instagram story: \n\n\"This new generation always on the phone \ud83d\udcf1\u274c\ufe0f\ud83e\udd23 CRISTIANO\" https://t.co/GNg2uPbtuc\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-21T12:20:06.439585Z",
+        "fb_post_id": "1094922960379153_122105656245360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122105656245360902"
     }
 }
