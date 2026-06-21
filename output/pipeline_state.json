@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWorldCup/status/2065830303487410271#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "71",
-        "telegram_file_id": "AgACAgUAAxkDAANHai2O0Rn4mZLFcMKs4Jhy7WkqCq8AAuUQaxv-sWlVxLGn2EET_38BAAMCAAN3AAM8BA",
-        "title": "Two decades of Lionel Messi at the #FIFAWorldCup \ud83c\udde6\ud83c\uddf7\ud83d\udcab",
-        "profile": "FIFAWorldCup",
-        "caption": "Two decades of Lionel Messi at the #FIFAWorldCup \ud83c\udde6\ud83c\uddf7\ud83d\udcab",
-        "internal_post_id": "FWC_1781370564",
-        "fb_post_id": "1094922960379153_122099023161360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122099023161360902"
-    },
     "https://nitter.net/FIFAWC26Updates/status/2065852112039530800#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "75",
@@ -726,5 +715,20 @@
         "upload_time": "2026-06-20T23:17:54.237196Z",
         "fb_post_id": "1094922960379153_122105166603360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122105166603360902"
+    },
+    "FIFA-20260621-0001": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-21T04:46:16.380531Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068553117562720751",
+        "telegram_msg_id": "266",
+        "telegram_file_id": "AgACAgUAAxkDAAIBCmo3bPnPykaE2AtET7tBOy83jU3KAAL2D2sb4DbBVZ_inUscV4NUAQADAgADeQADPAQ",
+        "title": "\ud83d\udea8 JAPAN ARE FLYING! \ud83c\uddef\ud83c\uddf5\ud83d\udd25  Ayase Ueda scores the second goal in Monterrey \ud83c\uddf2\ud83c\uddfd to make it 2-0 against Tu",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 JAPAN ARE FLYING! \ud83c\uddef\ud83c\uddf5\ud83d\udd25\n\nAyase Ueda scores the second goal in Monterrey \ud83c\uddf2\ud83c\uddfd to make it 2-0 against Tunisia \ud83c\uddf9\ud83c\uddf3. \u26bd https://t.co/laYcfvbxwp",
+        "edit_time": "2026-06-21T04:47:53.644234Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 JAPAN ARE FLYING! \ud83c\uddef\ud83c\uddf5\ud83d\udd25  Ayase Ueda scores the second goal in Monterrey \ud83c\uddf2\ud83c\uddfd to make it 2-0 against Tu\n\n\ud83d\udea8 JAPAN ARE FLYING! \ud83c\uddef\ud83c\uddf5\ud83d\udd25\n\nAyase Ueda scores the second goal in Monterrey \ud83c\uddf2\ud83c\uddfd to make it 2-0 against Tunisia \ud83c\uddf9\ud83c\uddf3. \u26bd https://t.co/laYcfvbxwp\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-21T04:50:25.163796Z",
+        "fb_post_id": "1094922960379153_122105333109360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122105333109360902"
     }
 }
