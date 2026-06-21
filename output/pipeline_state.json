@@ -1,17 +1,4 @@
 {
-    "FIFA-20260614-0001": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "110",
-        "telegram_file_id": "AgACAgUAAxkDAANtai4lTqRHQUYxQzjb_vfG5KBImXsAAtwPaxtfwHFVCK82YoX0PaUBAAMCAAN3AAM8BA",
-        "title": "\ud83d\udea8 HISTORY MADE: Scotland secure their first World Cup victory since 1990.",
-        "profile": "WorldCupMedia_",
-        "caption": "\ud83d\udea8 HISTORY MADE: Scotland secure their first World Cup victory since 1990.",
-        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 HISTORY MADE: Scotland secure their first World Cup victory since 1990.\n\n#FIFAWorldCup",
-        "source_url": "https://x.com/WorldCupMedia_/status/2065999236739760548",
-        "upload_time": "2026-06-14T04:09:07.870430Z",
-        "fb_post_id": "1094922960379153_122099349387360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122099349387360902"
-    },
     "FIFA-20260614-0002": {
         "status": "UPLOADED",
         "download_time": "2026-06-14T04:12:51.548801Z",
@@ -746,5 +733,20 @@
         "upload_time": "2026-06-21T17:51:46.938204Z",
         "fb_post_id": "1094922960379153_122105897907360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122105897907360902"
+    },
+    "FIFA-20260621-0006": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-21T19:49:24.515372Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068771507715842401",
+        "telegram_msg_id": "281",
+        "telegram_file_id": "AgACAgUAAxkDAAIBGWo4QKaBo_xw0JYINJQbD9Uk9ei5AAJSEGsbAezJVTtgy7il75goAQADAgADeQADPAQ",
+        "title": "\ud83d\udea8 KICK-OFF: Belgium \ud83c\udde7\ud83c\uddea vs Iran \ud83c\uddee\ud83c\uddf7  The action is underway in Inglewood as both sides look for a cruc",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 KICK-OFF: Belgium \ud83c\udde7\ud83c\uddea vs Iran \ud83c\uddee\ud83c\uddf7\n\nThe action is underway in Inglewood as both sides look for a crucial World Cup victory. \ud83d\udd25\ud83c\udfc6\n\nWho gets the three points? \ud83d\udc40\u26bd\ufe0f https://t.co/ieMsPxNiwT",
+        "edit_time": "2026-06-21T19:51:02.801549Z",
+        "facebook_post": "\u26bd Update \ud83c\udfc6\n\n\ud83d\udea8 KICK-OFF: Belgium \ud83c\udde7\ud83c\uddea vs Iran \ud83c\uddee\ud83c\uddf7  The action is underway in Inglewood as both sides look for a cruc\n\n\ud83d\udea8 KICK-OFF: Belgium \ud83c\udde7\ud83c\uddea vs Iran \ud83c\uddee\ud83c\uddf7\n\nThe action is underway in Inglewood as both sides look for a crucial World Cup victory. \ud83d\udd25\ud83c\udfc6\n\nWho gets the three points? \ud83d\udc40\u26bd\ufe0f https://t.co/ieMsPxNiwT\n\n#FIFAWorldCup",
+        "upload_time": "2026-06-21T19:54:17.756469Z",
+        "fb_post_id": "1094922960379153_122105988105360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122105988105360902"
     }
 }
