@@ -1,15 +1,4 @@
 {
-    "https://nitter.net/FIFAWC26Updates/status/2065852112039530800#m": {
-        "status": "UPLOADED",
-        "telegram_msg_id": "75",
-        "telegram_file_id": "AgACAgUAAxkDAANLai2p2Np_uLpFzb1EJW5IbZey7FgAAkkTaxtfwGlVZu5wOj5Q-zwBAAMCAAN3AAM8BA",
-        "title": "THIS IS FOOTBALL HERITAGE! \ud83c\udfc6\ud83d\udd25 #FIFA",
-        "profile": "FIFAWC26Updates",
-        "caption": "THIS IS FOOTBALL HERITAGE! \ud83c\udfc6\ud83d\udd25 #FIFA",
-        "internal_post_id": "FWC_1781377480",
-        "fb_post_id": "1094922960379153_122099079405360902",
-        "public_url": "https://www.facebook.com/1094922960379153/posts/122099079405360902"
-    },
     "https://nitter.net/FIFAWorldCup/status/2065890701133635693#m": {
         "status": "UPLOADED",
         "telegram_msg_id": "78",
@@ -730,5 +719,20 @@
         "upload_time": "2026-06-21T04:50:25.163796Z",
         "fb_post_id": "1094922960379153_122105333109360902",
         "public_url": "https://www.facebook.com/1094922960379153/posts/122105333109360902"
+    },
+    "FIFA-20260621-0002": {
+        "status": "UPLOADED",
+        "download_time": "2026-06-21T09:56:23.391350Z",
+        "source_url": "https://x.com/WorldCupMedia_/status/2068625242327757231",
+        "telegram_msg_id": "269",
+        "telegram_file_id": "AgACAgUAAxkDAAIBDWo3tYfnhN7HIHtolmp9IQAB-iyy2gAC8w9rGwHswVWZDEXxexDADgEAAwIAA3kAAzwE",
+        "title": "\ud83d\udea8 Lionel Messi in training today. \ud83c\udde6\ud83c\uddf7   The GOAT is ready. \ud83d\udc10 https://t.co/aEdfZ9nkJD",
+        "profile": "WorldCupMedia_",
+        "caption": "\ud83d\udea8 Lionel Messi in training today. \ud83c\udde6\ud83c\uddf7 \n\nThe GOAT is ready. \ud83d\udc10 https://t.co/aEdfZ9nkJD",
+        "edit_time": "2026-06-21T09:57:27.600585Z",
+        "facebook_post": "The GOAT is back on the pitch! \ud83d\udc10\n\nLionel Messi was spotted in full training today with Argentina, looking sharp and ready for the next challenge. Whether it's World Cup qualifiers or another title run, you never bet against number 10.\n\n#FIFAWorldCup #Football #Soccer #Messi #GOAT #Argentina",
+        "upload_time": "2026-06-21T09:59:17.423119Z",
+        "fb_post_id": "1094922960379153_122105558553360902",
+        "public_url": "https://www.facebook.com/1094922960379153/posts/122105558553360902"
     }
 }
