@@ -154,35 +154,33 @@ def create_football_post(image_path, output_path, headline, hook_text, branding=
     with Pilmoji(img) as pilmoji:
         start_y = bottom_y + 20
         
-        # --- SHORT Headline (White, Bold, BIG size 42) ---
-        f_head = get_font(42, bold=True)
+        # --- SHORT Headline (White, Bold, BIG size 44) ---
+        f_head = get_font(44, bold=True)
         headline_text = headline.strip() if headline else "FOOTBALL UPDATE"
         
-        # FORCE short headline: max 7 words
-        headline_words = headline_text.split()[:7]
-        headline_text = " ".join(headline_words)
+        # FORCE SHORT: max 6 words ONLY
+        headline_words = headline_text.split()[:6]
+        headline_text = " ".join(headline_words).upper()
         
-        # Wrap if still too long
-        headline_lines = textwrap.wrap(headline_text, width=45)
-        for line in headline_lines[:2]:
-            pilmoji.text((30, start_y), line.upper(), fill=white, font=f_head)
-            start_y += 52
+        # Single line - no wrapping for headline
+        pilmoji.text((30, start_y), headline_text, fill=white, font=f_head)
+        start_y += 55
         
         start_y += 8
         
-        # --- SHORT Description (White, Regular, size 28) ---
-        f_desc = get_font(28, bold=False)
+        # --- SHORT Description (White, Regular, size 26) ---
+        f_desc = get_font(26, bold=False)
         
-        # FORCE short description: max 25 words
-        desc_words = description.split()[:25]
+        # FORCE SHORT: max 18 words, 2 lines
+        desc_words = description.split()[:18]
         short_description = " ".join(desc_words)
-        if len(description.split()) > 25:
+        if len(description.split()) > 18:
             short_description += "..."
         
-        story_lines = textwrap.wrap(short_description, width=68)
+        story_lines = textwrap.wrap(short_description, width=70)
         for line in story_lines[:2]:  # Max 2 lines ONLY
             pilmoji.text((30, start_y), line, fill=white, font=f_desc)
-            start_y += 38
+            start_y += 34
         
         start_y += 5
         
