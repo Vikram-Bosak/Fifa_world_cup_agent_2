@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def run_agent_1():
     logging.info("Starting Agent 1: Downloader")
     # Supports multiple profiles separated by comma
-    profiles_str = os.getenv("TWITTER_SOURCE_PROFILE", "WorldCupMedia_,Waleedahmdd,ofootball__")
+    profiles_str = os.getenv("TWITTER_SOURCE_PROFILE", "WorldCupMedia_,Waleedahmdd,FIFAWC26Updates,FIFAcom,SkyFootball,TheSunFootball,footballontnt,TrollFootball,Footballtweet,FBAwayDays")
     profiles = [p.strip() for p in profiles_str.split(',') if p.strip()]
     
     state = load_state()
