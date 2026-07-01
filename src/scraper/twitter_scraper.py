@@ -1,185 +1,184 @@
 import os
 import time
 import logging
-import random
-import asyncio
-from datetime import datetime, timezone
-from bs4 import BeautifulSoup
+import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone, timedelta
+from email.utils import parsedate_to_datetime
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def get_latest_photo_tweet(profiles, processed_urls):
-    return asyncio.run(_get_latest_photo_tweet_async(profiles, processed_urls))
+# Nitter instances (fallback order)
+NITTER_INSTANCES = [
+    "https://nitter.net",
+    "https://nitter.privacydev.net",
+    "https://nitter.poast.org",
+    "https://xcancel.com",
+]
 
-async def _get_latest_photo_tweet_async(profiles, processed_urls):
+def _fetch_rss(url, timeout=15):
+    """Fetch RSS feed from URL."""
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    resp = urllib.request.urlopen(req, timeout=timeout)
+    return resp.read().decode('utf-8', errors='replace')
+
+def _find_working_nitter():
+    """Find a working Nitter instance."""
+    for instance in NITTER_INSTANCES:
+        try:
+            url = f"{instance}/FIFAcom/rss"
+            _fetch_rss(url, timeout=10)
+            logging.info(f"Using Nitter instance: {instance}")
+            return instance
+        except Exception:
+            continue
+    logging.warning("No working Nitter instance found. Trying xcancel.com as last resort.")
+    return "https://xcancel.com"
+
+def _parse_rss_date(date_str):
+    """Parse RSS date string to datetime."""
     try:
-        from twikit import Client
-        from twikit.user import User
-        # Monkeypatch User.__init__ to fix 'urls' KeyError in twikit==2.1.2
-        if not hasattr(User, '_patched_for_urls'):
-            orig_init = User.__init__
-            def patched_init(self, client, data):
-                if 'legacy' in data:
-                    legacy = data['legacy']
-                    # Patch all potential missing keys in legacy
-                    defaults = {
-                        'location': '',
-                        'description': '',
-                        'pinned_tweet_ids_str': [],
-                        'verified': False,
-                        'possibly_sensitive': False,
-                        'can_dm': False,
-                        'can_media_tag': False,
-                        'want_retweets': False,
-                        'default_profile': False,
-                        'default_profile_image': False,
-                        'has_custom_timelines': False,
-                        'followers_count': 0,
-                        'fast_followers_count': 0,
-                        'normal_followers_count': 0,
-                        'friends_count': 0,
-                        'favourites_count': 0,
-                        'listed_count': 0,
-                        'media_count': 0,
-                        'statuses_count': 0,
-                        'is_translator': False,
-                        'translator_type': '',
-                        'withheld_in_countries': []
-                    }
-                    for k, v in defaults.items():
-                        if k not in legacy:
-                            legacy[k] = v
-                            
-                    if 'entities' in legacy:
-                        entities = legacy['entities']
-                        if 'description' in entities and 'urls' not in entities['description']:
-                            entities['description']['urls'] = []
-                        if 'url' in entities and 'urls' not in entities['url']:
-                            if 'url' not in entities:
-                                entities['url'] = {}
-                            entities['url']['urls'] = []
-                orig_init(self, client, data)
-            User.__init__ = patched_init
-            User._patched_for_urls = True
-    except ImportError:
-        logging.error("twikit is not installed. Run: pip install twikit")
-        return None
-        
-    client = Client('en-US')
+        return parsedate_to_datetime(date_str)
+    except Exception:
+        try:
+            # Try ISO format
+            return datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        except Exception:
+            return None
+
+def get_latest_photo_tweet(profiles, processed_urls):
+    """
+    Find latest photo tweet from Twitter profiles using Nitter RSS.
+    Returns dict with tweet info or SKIPPED status.
+    """
+    logging.info(f"Searching Nitter RSS for photos from {len(profiles)} profiles...")
     
-    # Check credentials
-    username = os.getenv("TWITTER_USERNAME")
-    email = os.getenv("TWITTER_EMAIL")
-    password = os.getenv("TWITTER_PASSWORD")
-    
-    # Try to load cookies
-    cookies_path = 'cookies.json'
-    try:
-        if os.path.exists(cookies_path):
-            client.load_cookies(cookies_path)
-            logging.info("Loaded Twitter cookies.")
-        else:
-            if not all([username, email, password]):
-                logging.error("Missing Twitter credentials in .env and no cookies.json found.")
-                return None
-            logging.info("Logging into Twitter...")
-            await client.login(auth_info_1=username, auth_info_2=email, password=password)
-            client.save_cookies(cookies_path)
-            logging.info("Successfully logged in and saved cookies.")
-    except Exception as e:
-        logging.error(f"Twitter Authentication failed: {e}")
-        return None
-        
-    found_any_in_2h = False
-    found_duplicate_in_2h = False
+    nitter = _find_working_nitter()
+    time_limit = datetime.now(timezone.utc) - timedelta(hours=3)
     
     for profile in profiles:
-        logging.info(f"Scanning profile: {profile} via twikit")
-        try:
-            user = await client.get_user_by_screen_name(profile.strip())
-            tweets = await user.get_tweets('Tweets', count=10)
+        profile = profile.strip()
+        if not profile:
+            continue
             
-            for tweet in tweets:
-                # Check age (within last 3 hours for safe overlap with 2h schedule)
-                try:
-                    pub_time = datetime.strptime(tweet.created_at, '%a %b %d %H:%M:%S %z %Y')
-                    age_seconds = (datetime.now(timezone.utc) - pub_time).total_seconds()
-                    if age_seconds > 10800:
-                        continue
-                    found_any_in_2h = True
-                except Exception as e:
-                    logging.warning(f"Could not parse tweet time: {tweet.created_at} - {e}")
-                    pass
-                
-                # Construct tweet URL
-                url = f"https://x.com/{profile.strip()}/status/{tweet.id}"
-                
-                if url in processed_urls:
-                    found_duplicate_in_2h = True
+        logging.info(f"Checking profile: {profile}")
+        
+        try:
+            rss_url = f"{nitter}/{profile}/rss"
+            rss_data = _fetch_rss(rss_url)
+            
+            # Parse RSS
+            root = ET.fromstring(rss_data)
+            
+            for item in root.findall('.//item'):
+                # Get tweet URL
+                link = item.find('link')
+                if link is None or not link.text:
                     continue
-                    
-                text = tweet.text
+                tweet_url = link.text.strip()
                 
-                # Check for video/gif indicators in text
-                if '>Video<' in text or '>GIF<' in text:
+                # Skip if already processed
+                if tweet_url in processed_urls:
                     continue
-                    
-                # Check media
-                if not hasattr(tweet, 'media') or not tweet.media:
-                    continue
-                    
-                has_video = False
-                valid_image_url = None
                 
-                for m in tweet.media:
-                    if m['type'] in ['video', 'animated_gif']:
-                        has_video = True
-                        break
-                    if m['type'] == 'photo' and not valid_image_url:
-                        valid_image_url = m['media_url_https']
-                        
-                if has_video or not valid_image_url:
+                # Get publication date
+                pub_date_el = item.find('pubDate')
+                if pub_date_el is not None and pub_date_el.text:
+                    pub_date = _parse_rss_date(pub_date_el.text)
+                    if pub_date:
+                        # Make timezone-aware if naive
+                        if pub_date.tzinfo is None:
+                            pub_date = pub_date.replace(tzinfo=timezone.utc)
+                        if pub_date < time_limit:
+                            continue  # Too old
+                
+                # Get title/description
+                title_el = item.find('title')
+                title = title_el.text.strip() if title_el is not None and title_el.text else ""
+                
+                desc_el = item.find('description')
+                description = desc_el.text.strip() if desc_el is not None and desc_el.text else ""
+                
+                # Check if this is a video (skip videos)
+                content = (title + " " + description).lower()
+                if 'video' in content or '>video<' in content or '>gif<' in content:
+                    logging.debug(f"Skipping video tweet: {tweet_url}")
                     continue
-                    
-                # Found a valid tweet
-                logging.info(f"Found valid tweet from {profile}. Stopping scan.")
+                
+                # Extract image URL from description (Nitter embeds images as <img> tags)
+                image_url = None
+                if '<img' in description:
+                    # Parse HTML to find img src
+                    try:
+                        from bs4 import BeautifulSoup
+                        soup = BeautifulSoup(description, 'html.parser')
+                        img_tag = soup.find('img')
+                        if img_tag and img_tag.get('src'):
+                            src = img_tag['src']
+                            # Convert Nitter URL to direct image URL
+                            if src.startswith('/pic/'):
+                                src = f"{nitter}{src}"
+                            elif src.startswith('http'):
+                                pass  # Already absolute
+                            else:
+                                src = f"{nitter}/{src}"
+                            image_url = src
+                    except Exception as e:
+                        logging.debug(f"Failed to parse image from HTML: {e}")
+                
+                # Also check media:thumbnail in RSS
+                if not image_url:
+                    media_thumb = item.find('{http://search.yahoo.com/mrss/}thumbnail')
+                    if media_thumb is not None:
+                        image_url = media_thumb.get('url')
+                
+                # Check enclosure
+                if not image_url:
+                    enclosure = item.find('enclosure')
+                    if enclosure is not None and 'image' in enclosure.get('type', ''):
+                        image_url = enclosure.get('url')
+                
+                if not image_url:
+                    logging.debug(f"No image found in tweet: {tweet_url}")
+                    continue
+                
+                # Make image URL absolute if needed
+                if image_url.startswith('/'):
+                    image_url = f"{nitter}{image_url}"
+                
+                logging.info(f"Found photo from {profile}: {tweet_url}")
+                
                 return {
-                    "title": text[:100].replace('\n', ' '), # Safe title
-                    "caption": text,
-                    "url": url,
-                    "image_url": valid_image_url,
-                    "profile": profile
+                    "title": title[:100].replace('\n', ' '),
+                    "caption": description or title,
+                    "url": tweet_url,
+                    "image_url": image_url,
+                    "profile": profile,
+                    "status": "FOUND"
                 }
                 
         except Exception as e:
-            logging.error(f"Error fetching tweets for {profile}: {e}")
-            await asyncio.sleep(2)
+            logging.error(f"Error fetching RSS for {profile}: {e}")
             continue
-            
-    # If we get here, no unprocessed valid tweet was found
-    if found_duplicate_in_2h:
-        return {
-            "status": "SKIPPED",
-            "reason": "Content already processed in the last 3 hours.",
-            "checked_profiles": profiles
-        }
     
     return {
         "status": "SKIPPED",
-        "reason": "No valid image found in the last 3 hours across all configured Twitter profiles.",
+        "reason": "No new photo found in the last 3 hours across all profiles.",
         "checked_profiles": profiles
     }
 
 def download_image(url, output_path):
+    """Download image from URL to output_path."""
     import requests
     from src.http_client import get_retry_session
     try:
         session = get_retry_session(retries=3)
-        response = session.get(url, timeout=15)
+        response = session.get(url, timeout=15, headers={'User-Agent': 'Mozilla/5.0'})
         response.raise_for_status()
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, 'wb') as f:
             f.write(response.content)
+        logging.info(f"Downloaded image: {output_path} ({len(response.content)} bytes)")
         return True
     except Exception as e:
         logging.error(f"Failed to download image from {url}: {e}")

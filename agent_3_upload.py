@@ -20,13 +20,33 @@ except ImportError:
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+def get_page_access_token(user_token, page_id):
+    """Resolve Page Access Token from User Access Token."""
+    url = f"https://graph.facebook.com/v19.0/me/accounts?limit=100&access_token={user_token}"
+    try:
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            for page in response.json().get('data', []):
+                if str(page.get('id')) == str(page_id):
+                    logging.info(f"Resolved Page Access Token for: {page.get('name')} ({page_id})")
+                    return page.get('access_token')
+            logging.warning(f"Page ID {page_id} not found. Using user token as fallback.")
+        else:
+            logging.warning(f"Failed to query /me/accounts (status {response.status_code}). Using user token.")
+    except Exception as e:
+        logging.error(f"Error resolving Page Access Token: {e}. Using user token.")
+    return user_token
+
 def upload_to_facebook(image_path, text_content):
-    access_token = os.getenv("FACEBOOK_ACCESS_TOKEN")
+    user_token = os.getenv("FACEBOOK_ACCESS_TOKEN")
     page_id = os.getenv("FACEBOOK_PAGE_ID", "me")
     
-    if not access_token:
+    if not user_token:
         logging.error("FACEBOOK_ACCESS_TOKEN is missing.")
         return False, None
+    
+    # Resolve Page Access Token
+    access_token = get_page_access_token(user_token, page_id)
         
     url = f"https://graph.facebook.com/v19.0/{page_id}/photos"
     from src.http_client import get_retry_session
