@@ -152,30 +152,48 @@ def create_football_post(image_path, output_path, headline, hook_text, branding=
 
     # ═══ 5. Text Content (White text on blue - Agent 1 style) ═══
     with Pilmoji(img) as pilmoji:
-        start_y = bottom_y + 25
+        start_y = bottom_y + 20
         
-        # --- Headline (White, Bold, size 38) ---
-        f_head = get_font(38, bold=True)
-        headline_text = headline.strip() if headline else ""
-        # Wrap headline if too long
-        headline_lines = textwrap.wrap(headline_text, width=50)
+        # --- SHORT Headline (White, Bold, BIG size 42) ---
+        f_head = get_font(42, bold=True)
+        headline_text = headline.strip() if headline else "FOOTBALL UPDATE"
+        
+        # FORCE short headline: max 7 words
+        headline_words = headline_text.split()[:7]
+        headline_text = " ".join(headline_words)
+        
+        # Wrap if still too long
+        headline_lines = textwrap.wrap(headline_text, width=45)
         for line in headline_lines[:2]:
-            pilmoji.text((30, start_y), line, fill=white, font=f_head)
-            start_y += 50
+            pilmoji.text((30, start_y), line.upper(), fill=white, font=f_head)
+            start_y += 52
+        
+        start_y += 8
+        
+        # --- SHORT Description (White, Regular, size 28) ---
+        f_desc = get_font(28, bold=False)
+        
+        # FORCE short description: max 25 words
+        desc_words = description.split()[:25]
+        short_description = " ".join(desc_words)
+        if len(description.split()) > 25:
+            short_description += "..."
+        
+        story_lines = textwrap.wrap(short_description, width=68)
+        for line in story_lines[:2]:  # Max 2 lines ONLY
+            pilmoji.text((30, start_y), line, fill=white, font=f_desc)
+            start_y += 38
         
         start_y += 5
         
-        # --- Description (White, Regular, size 30) ---
-        f_desc = get_font(30, bold=False)
-        story_lines = textwrap.wrap(description, width=72)
-        for line in story_lines[:3]:  # Max 3 lines
-            pilmoji.text((30, start_y), line, fill=white, font=f_desc)
-            start_y += 42
-        
-        # --- Hashtags (Light Gray, size 30) ---
+        # --- Hashtags (Light Gray, size 26) ---
+        f_tags = get_font(26, bold=False)
         if hashtag_str:
-            pilmoji.text((30, start_y), hashtag_str, fill=hashtag_color, font=f_desc)
-            start_y += 45
+            # Limit hashtags to max 5
+            tag_list = hashtag_str.split()[:5]
+            hashtag_str = " ".join(tag_list)
+            pilmoji.text((30, start_y), hashtag_str, fill=hashtag_color, font=f_tags)
+            start_y += 40
         
         # --- Separator Line ---
         sep_y = height - 100
