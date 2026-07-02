@@ -10,7 +10,13 @@ from src.ai_generator import analyze_and_generate_content
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def run_agent_2():
+    from src.limits import can_edit, increment_edit
+    
     logging.info("Starting Agent 2: Editor")
+    
+    if not can_edit():
+        logging.info("Daily edit limit reached (5/day). Skipping.")
+        return
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     
     if not bot_token:
@@ -78,6 +84,7 @@ def run_agent_2():
                         new_file_id = photos[-1]['file_id'] if photos else None
                         
                         logging.info(f"Sent EDITED status. New Message ID: {new_msg_id}")
+                    increment_edit()
                         
                         update_post_status(
                             content_id=content_id,

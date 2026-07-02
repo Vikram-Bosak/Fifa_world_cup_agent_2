@@ -70,7 +70,13 @@ def upload_to_facebook(image_path, text_content):
         return False, str(e)
 
 def run_agent_3():
+    from src.limits import can_upload, increment_upload
+    
     logging.info("Starting Agent 3: Uploader (Facebook + YouTube Shorts)")
+    
+    if not can_upload():
+        logging.info("Daily upload limit reached (5/day). Skipping.")
+        return
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     
     if not bot_token:
@@ -127,6 +133,7 @@ def run_agent_3():
                         video_data = {"fb_url": public_url}
                         fb_success = True
                         logging.info(f"Successfully uploaded post {content_id} to Facebook.")
+                        increment_upload()
                     else:
                         video_data = {"fb_err": str(fb_response)}
                         logging.error(f"Failed to upload post {content_id} to Facebook: {fb_response}")

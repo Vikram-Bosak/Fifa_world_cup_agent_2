@@ -9,7 +9,13 @@ from src.state_manager import load_state, update_post_status, generate_content_i
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def run_agent_1():
+    from src.limits import can_download, increment_download
+    
     logging.info("Starting Agent 1: Downloader")
+    
+    if not can_download():
+        logging.info("Daily download limit reached (5/day). Skipping.")
+        return
     # Supports multiple profiles separated by comma
     profiles_str = os.getenv("TWITTER_SOURCE_PROFILE", "WorldCupMedia_,Waleedahmdd,FIFAWC26Updates,FIFAcom,SkyFootball,TheSunFootball,footballontnt,TrollFootball,Footballtweet,FBAwayDays")
     profiles = [p.strip() for p in profiles_str.split(',') if p.strip()]
@@ -77,6 +83,7 @@ def run_agent_1():
             file_id = photos[-1]['file_id'] if photos else None
             
             logging.info(f"Sent DOWNLOADED status to Telegram. Content ID: {content_id}, Message ID: {msg_id}")
+        increment_download()
             
             update_post_status(
                 content_id=content_id,
